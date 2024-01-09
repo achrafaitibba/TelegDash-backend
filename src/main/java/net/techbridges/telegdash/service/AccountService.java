@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.configuration.token.Token;
@@ -45,6 +46,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -246,7 +248,7 @@ public class AccountService {
         return plans;
     }
 
-    public Object upgrade(Long planId) throws Exception {
+    public String upgrade(Long planId) throws Exception {
         String token = headers.getHeader("Authorization").substring(7);
         String email = jwtService.extractUsername(token);
         Optional<Account> account = accountRepository.findByEmail(email);
@@ -262,7 +264,15 @@ public class AccountService {
             accountRepository.save(account.get());
             return extractSubscriptionUrl(newSub);
         }else{
-            return paymentController.reviseSubscription(new ReviseSubscriptionRequest(account.get().getSubscriptionId(), plan.getPaypalPlanId()));
+            try{
+                paymentController.reviseSubscription(new ReviseSubscriptionRequest(account.get().getSubscriptionId(), plan.getPaypalPlanId()));
+                account.get().setPlan(plan);
+                accountRepository.save(account.get());
+                return "Success";
+            }catch (Exception e){
+                log.error(e.getMessage());
+                throw new RequestException("Error occurred in our server", HttpStatus.BAD_REQUEST);
+            }
         }
     }
 }
