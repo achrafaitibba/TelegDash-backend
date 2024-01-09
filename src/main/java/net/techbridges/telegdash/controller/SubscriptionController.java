@@ -24,7 +24,7 @@ public class SubscriptionController {
     }
 
     @GetMapping("/upgrade/{planId}")
-    public ResponseEntity<Object> upgrade(@PathVariable Long planId) throws Exception{
+    public ResponseEntity<String> upgrade(@PathVariable Long planId) throws Exception{
         return ResponseEntity.ok().body(accountService.upgrade(planId));
     }
 }
