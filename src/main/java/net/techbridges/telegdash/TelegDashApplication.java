@@ -11,5 +11,4 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(TelegDashApplication.class, args);
     }
-
 }
