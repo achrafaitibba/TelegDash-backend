@@ -23,9 +23,6 @@ app:
   security:
     jwt:
       secret-key:
-      expiration: 86400000 # 1 day
+      expiration:
       refresh-token:
-        expiration: 604800000 # 7 days
-
-server:
-  port: 8081
+        expiration:
