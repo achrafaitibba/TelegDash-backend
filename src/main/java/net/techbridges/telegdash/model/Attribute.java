@@ -1,4 +1,4 @@
 package net.techbridges.telegdash.model;
 
-public class Account {
+public class Attribute {
 }
