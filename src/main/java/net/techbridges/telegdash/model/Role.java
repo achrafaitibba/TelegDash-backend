@@ -1,4 +1,5 @@
 package net.techbridges.telegdash.model;
 
-public class Group {
+public enum Role {
+    Owner
 }
