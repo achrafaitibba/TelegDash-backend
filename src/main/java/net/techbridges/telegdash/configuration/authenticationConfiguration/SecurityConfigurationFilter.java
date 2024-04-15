@@ -34,9 +34,9 @@ public class SecurityConfigurationFilter {
                 /** authorized endpoints: doesn't require authentication */
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/register",
-                        "/api/refresh-token",
-                        "/api/authenticate"
+                        "/api/v1/user/register",
+                        "/api/v1/user/refresh-token",
+                        "/api/v1/user/authenticate"
                 )
                 .permitAll()
                 //////////////////////

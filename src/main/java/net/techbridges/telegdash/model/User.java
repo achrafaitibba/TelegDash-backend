@@ -26,7 +26,6 @@ public class User implements UserDetails {
     @Id
     private String username;
     private String password;
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 

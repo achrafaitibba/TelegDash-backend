@@ -9,7 +9,8 @@ import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.configuration.token.Token;
 import net.techbridges.telegdash.configuration.token.TokenRepository;
 import net.techbridges.telegdash.configuration.token.TokenType;
-import net.techbridges.telegdash.dto.UserResponse;
+import net.techbridges.telegdash.dto.request.UserAuthRequest;
+import net.techbridges.telegdash.dto.response.UserAuthResponse;
 import net.techbridges.telegdash.model.User;
 import net.techbridges.telegdash.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,10 +33,10 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
 
 
-    public UserResponse register(User user) {
+    public UserAuthResponse register(UserAuthRequest user) {
         User toSave = userRepository.save(User.builder()
-                .username(user.getUsername())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .username(user.username())
+                .password(passwordEncoder.encode(user.password()))
                 .build());
         /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
          Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
@@ -47,28 +48,28 @@ public class UserService {
         var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
         var refreshToken = jwtService.generateRefreshToken(toSave);
         saveUserToken(toSave, jwtToken);
-        return new UserResponse(user.getUsername(), jwtToken, refreshToken);
+        return new UserAuthResponse(user.username(), jwtToken, refreshToken);
     }
 
-    public UserResponse authenticate(User user) {
-        Optional<User> toAuthenticate = userRepository.findByUsername(user.getUsername());
+    public UserAuthResponse authenticate(UserAuthRequest user) {
+        Optional<User> toAuthenticate = userRepository.findByUsername(user.username());
         if (!toAuthenticate.isPresent()) {
             System.out.println("Account doesn't exist");
-        } else if (!passwordEncoder.matches(user.getPassword(), toAuthenticate.get().getPassword())) {
+        } else if (!passwordEncoder.matches(user.password(), toAuthenticate.get().getPassword())) {
             System.out.println("The password you entered is incorrect");
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        user.getPassword()
+                        user.username(),
+                        user.password()
                 )
         );
         var jwtToken = jwtService.generateToken(new HashMap<>(), toAuthenticate.get());
         var refreshToken = jwtService.generateRefreshToken(toAuthenticate.get());
         /** @Ignore revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);
-        saveUserToken(user, jwtToken);
-        return new UserResponse(user.getUsername(), jwtToken, refreshToken);
+        saveUserToken(User.builder().username(user.username()).password(user.password()).build(), jwtToken);
+        return new UserAuthResponse(user.username(), jwtToken, refreshToken);
 
     }
 
@@ -104,7 +105,7 @@ public class UserService {
                 var newToken = jwtService.generateToken(new HashMap<>(), user);
                 jwtService.revokeAllUserTokens(user.getUsername());
                 saveUserToken(user, newToken);
-                var _response = new UserResponse(username, newToken, refreshToken);
+                var _response = new UserAuthResponse(username, newToken, refreshToken);
                 new ObjectMapper()
                         .writeValue(
                                 response.getOutputStream(),

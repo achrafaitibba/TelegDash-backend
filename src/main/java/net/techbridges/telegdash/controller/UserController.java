@@ -4,7 +4,8 @@ package net.techbridges.telegdash.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import net.techbridges.telegdash.dto.UserResponse;
+import net.techbridges.telegdash.dto.request.UserAuthRequest;
+import net.techbridges.telegdash.dto.response.UserAuthResponse;
 import net.techbridges.telegdash.model.User;
 import net.techbridges.telegdash.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +20,12 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public UserResponse register(@RequestBody User user){
+    public UserAuthResponse register(@RequestBody UserAuthRequest user){
         return userService.register(user);
     }
 
     @PostMapping("/authenticate")
-    public UserResponse authenticate(@RequestBody User user){
+    public UserAuthResponse authenticate(@RequestBody UserAuthRequest user){
         return userService.authenticate(user);
     }
 
