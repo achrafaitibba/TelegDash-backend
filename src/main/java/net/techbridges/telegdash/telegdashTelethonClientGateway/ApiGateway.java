@@ -49,6 +49,7 @@ public class ApiGateway {
         requestBody.put("channel_id", channelId);
         requestBody.put("limit", limit);
         HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+        //todo, use exchange, instead of postForEntity
         ResponseEntity<List> responseEntity = restTemplate.postForEntity(
                 BASEURL.concat("/members"),
                 requestEntity,
@@ -98,6 +99,23 @@ public class ApiGateway {
         //todo, change return type & message
         return "Done";
 
+    }
+
+    
+    public String sendMessageToAdmin(String chatId, String message){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(username, password);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("chat_id", chatId);
+        requestBody.put("message", message);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
+                BASEURL.concat("/admin/send_reminder"),
+                HttpMethod.POST,
+                requestEntity,
+                HashMap.class
+        );
+        return String.valueOf(responseEntity.getBody().get("message"));
     }
 
 
