@@ -2,6 +2,7 @@ package net.techbridges.telegdash.telegdashTelethonClientGateway;
 
 
 import lombok.RequiredArgsConstructor;
+import net.techbridges.telegdash.model.BasicMember;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
@@ -38,7 +41,30 @@ public class ApiGateway {
         return Integer.valueOf(responseEntity.getBody().get("count").toString());
     }
 
+    public List<BasicMember> getAllMembers(String channelId, int limit) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(username, password);
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("channel_id", channelId);
+        requestBody.put("limit", limit);
+        HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+        ResponseEntity<List> responseEntity = restTemplate.postForEntity(
+                BASEURL.concat("/members"),
+                requestEntity,
+                List.class
+        );
+        List<BasicMember> members = new ArrayList<>();
+        List<HashMap<String, Object>> responseData = responseEntity.getBody();
+        responseData.forEach(memberData -> {
+            String telegramId = memberData.get("member_id") != null ? memberData.get("member_id").toString() : "No Data";
+            String username = memberData.get("username") != null ? memberData.get("username").toString() : "No Data";
+            String firstName = memberData.get("firstName") != null ? memberData.get("firstName").toString() : "No Data";
+            String lastName = memberData.get("lastName") != null ? memberData.get("lastName").toString()  : "No Data";
+            members.add(new BasicMember(telegramId, username, firstName, lastName));
+        });
 
+        return members;
+    }
 
 
 
