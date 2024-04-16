@@ -22,16 +22,12 @@ import java.util.List;
 public class ApiGateway {
     @Value("${api.base_url}")
     private String BASEURL;
-    @Value("${api.auth.username}")
-    private String username;
-    @Value("${api.auth.password}")
-    private String password;
     private final RestTemplate restTemplate;
+    private final HttpHeaders httpHeaders;
+
 
     public Integer getMembersCount(String channelId){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(username, password);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(channelId, headers);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(channelId, httpHeaders);
         ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
                 BASEURL.concat("/members/"+channelId+"/count"),
                 HttpMethod.GET,
@@ -40,14 +36,13 @@ public class ApiGateway {
         );
         return Integer.valueOf(responseEntity.getBody().get("count").toString());
     }
+@GetMapping
+    public List<BasicMember> getAllMembers(String channelId, double limit) {
 
-    public List<BasicMember> getAllMembers(String channelId, int limit) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(username, password);
         HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("channel_id", channelId);
         requestBody.put("limit", limit);
-        HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
         //todo, use exchange, instead of postForEntity
         ResponseEntity<List> responseEntity = restTemplate.postForEntity(
                 BASEURL.concat("/members"),
@@ -76,15 +71,14 @@ public class ApiGateway {
      * {message=Member kicked successfully: 1111111}
      * {message=Member kicked successfully: 1111111}
      */
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(username, password);
+
         //todo, use array instead of list of Strings
         memberIds.forEach(
                 memberId -> {
                     HashMap<String, Object> requestBody = new HashMap<>();
                     requestBody.put("channel_id", channelId);
                     requestBody.put("member_id", memberId);
-                    HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+                    HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
                     ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
                             BASEURL.concat("/members/kick"),
                             HttpMethod.POST,
@@ -100,14 +94,12 @@ public class ApiGateway {
 
     }
 
-    
+
     public String sendMessageToAdmin(String chatId, String message){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(username, password);
         HashMap<String, Object> requestBody = new HashMap<>();
         requestBody.put("chat_id", chatId);
         requestBody.put("message", message);
-        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
         ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
                 BASEURL.concat("/admin/send_reminder"),
                 HttpMethod.POST,
