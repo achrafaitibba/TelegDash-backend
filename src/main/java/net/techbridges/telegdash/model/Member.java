@@ -1,13 +1,13 @@
 package net.techbridges.telegdash.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 @Entity
 public class Member {
     @Id
     private Long memberId;
+    @Column(unique=true)
+    private String telegramId;
     private String username;
     private String firstName;
     private String lastName;
