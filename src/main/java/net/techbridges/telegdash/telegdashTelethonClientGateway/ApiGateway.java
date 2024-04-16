@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,6 +66,42 @@ public class ApiGateway {
 
         return members;
     }
+
+    //todo, check members if they exist, before kicking them, if a record throws an error, continue kicking the rest of members
+    public String kickMember(String channelId, List<String> memberIds) {
+        //todo, check the return
+    /**
+     * Make the client/frontend "not the user" see the kicked members list
+     * {message=Member kicked successfully: 1111111}
+     * {message=Member kicked successfully: 1111111}
+     * {message=Member kicked successfully: 1111111}
+     */
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(username, password);
+        //todo, use array instead of list of Strings
+        memberIds.forEach(
+                memberId -> {
+                    HashMap<String, Object> requestBody = new HashMap<>();
+                    requestBody.put("channel_id", channelId);
+                    requestBody.put("member_id", memberId);
+                    HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, headers);
+                    ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
+                            BASEURL.concat("/members/kick"),
+                            HttpMethod.POST,
+                            requestEntity,
+                            HashMap.class
+                    );
+                    System.out.println(responseEntity.getBody().toString());
+                }
+        );
+
+        //todo, change return type & message
+        return "Done";
+
+    }
+
+
+    //todo handle exceptions for each endpoint
 
 
 
