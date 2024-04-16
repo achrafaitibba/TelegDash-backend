@@ -43,9 +43,9 @@ public class ApiGateway {
         requestBody.put("channel_id", channelId);
         requestBody.put("limit", limit);
         HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
-        //todo, use exchange, instead of postForEntity
-        ResponseEntity<List> responseEntity = restTemplate.postForEntity(
+        ResponseEntity<List> responseEntity = restTemplate.exchange(
                 BASEURL.concat("/members"),
+                HttpMethod.POST,
                 requestEntity,
                 List.class
         );
