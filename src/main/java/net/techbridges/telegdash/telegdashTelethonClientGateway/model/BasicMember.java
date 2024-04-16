@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.model;
+package net.techbridges.telegdash.telegdashTelethonClientGateway.model;
 
 
 public record BasicMember

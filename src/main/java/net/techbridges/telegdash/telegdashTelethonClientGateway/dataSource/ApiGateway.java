@@ -1,8 +1,8 @@
-package net.techbridges.telegdash.telegdashTelethonClientGateway;
+package net.techbridges.telegdash.telegdashTelethonClientGateway.dataSource;
 
 
 import lombok.RequiredArgsConstructor;
-import net.techbridges.telegdash.model.BasicMember;
+import net.techbridges.telegdash.telegdashTelethonClientGateway.model.BasicMember;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
