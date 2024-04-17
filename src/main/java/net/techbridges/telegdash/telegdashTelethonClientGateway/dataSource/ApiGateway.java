@@ -18,28 +18,20 @@ public class ApiGateway {
     private final MemberService memberService;
     private final AdminService adminService;
 
-
     public Integer getMembersCount(String channelId) {
         return memberService.getMembersCount(httpHeaders, restTemplate, channelId);
     }
-
 
     public List<BasicMember> getAllMembers(String channelId, double limit) {
         return memberService.getAllMembers(httpHeaders, restTemplate, channelId, limit);
     }
 
-
     public String kickMember(String channelId, List<String> memberIds) {
         return memberService.kickMember(httpHeaders, restTemplate, channelId, memberIds);
     }
 
-
     public String sendMessageToAdmin(String chatId, String message) {
         return adminService.sendMessageToAdmin(httpHeaders, restTemplate, chatId, message);
     }
-
-
-    //todo handle exceptions for each endpoint
-
 
 }
