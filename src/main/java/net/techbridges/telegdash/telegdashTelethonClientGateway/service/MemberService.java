@@ -69,7 +69,6 @@ public class MemberService {
 
     public int kickMember(HttpHeaders httpHeaders, RestTemplate restTemplate, String channelId, List<String> memberIds) {
         try {
-            //todo, use array instead of list of Strings
             memberIds.forEach(
                     memberId -> {
                         HashMap<String, Object> requestBody = new HashMap<>();
