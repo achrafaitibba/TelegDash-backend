@@ -67,17 +67,8 @@ public class MemberService {
     }
 
 
-    public String kickMember(HttpHeaders httpHeaders, RestTemplate restTemplate, String channelId, List<String> memberIds) {
-
+    public int kickMember(HttpHeaders httpHeaders, RestTemplate restTemplate, String channelId, List<String> memberIds) {
         try {
-            //todo, check the return
-            /**
-             * Make the client/frontend "not the user" see the kicked members list
-             * {message=Member kicked successfully: 1111111}
-             * {message=Member kicked successfully: 1111111}
-             * {message=Member kicked successfully: 1111111}
-             */
-
             //todo, use array instead of list of Strings
             memberIds.forEach(
                     memberId -> {
@@ -95,8 +86,7 @@ public class MemberService {
                     }
             );
 
-            //todo, change return type & message
-            return "Done";
+            return 1;
         } catch (HttpClientErrorException e) {
             throw new RequestException(e.getResponseBodyAsString().substring(1, e.getResponseBodyAsString().length() - 2), HttpStatus.valueOf(e.getStatusCode().value()));
         }
