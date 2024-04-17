@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class MemberService {
-    @Value("${api.base_url}")
+    @Value("${api.telegdash}")
     private String BASEURL;
 
     public String urlBuilder() {

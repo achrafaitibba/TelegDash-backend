@@ -26,7 +26,7 @@ public class ApiGateway {
         return memberService.getAllMembers(httpHeaders, restTemplate, channelId, limit);
     }
 
-    public String kickMember(String channelId, List<String> memberIds) {
+    public int kickMember(String channelId, List<String> memberIds) {
         return memberService.kickMember(httpHeaders, restTemplate, channelId, memberIds);
     }
 
