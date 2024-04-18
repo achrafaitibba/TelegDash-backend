@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 @Service
 public class AdminService {
-    @Value("${api.base_url}")
+    @Value("${api.telegdash}")
     private String BASEURL;
 
     public String urlBuilder(){
