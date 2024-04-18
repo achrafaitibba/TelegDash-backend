@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.mailingService;
+package net.techbridges.telegdash.service;
 
 
 import org.thymeleaf.context.Context;

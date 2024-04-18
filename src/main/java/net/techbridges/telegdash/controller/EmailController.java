@@ -1,7 +1,9 @@
-package net.techbridges.telegdash.mailingService;
+package net.techbridges.telegdash.controller;
 
 
 import lombok.AllArgsConstructor;
+import net.techbridges.telegdash.model.EmailDetails;
+import net.techbridges.telegdash.service.EmailServiceImpl;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

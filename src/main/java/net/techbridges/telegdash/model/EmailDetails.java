@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.mailingService;
+package net.techbridges.telegdash.model;
 
 import lombok.Builder;
 import lombok.Data;
