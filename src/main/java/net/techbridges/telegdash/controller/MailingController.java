@@ -13,7 +13,7 @@ import org.thymeleaf.context.Context;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/emails")
-public class EmailController {
+public class MailingController {
 
     private EmailServiceImpl emailService;
 
