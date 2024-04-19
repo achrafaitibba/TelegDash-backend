@@ -12,6 +12,4 @@ public class TelegDashApplication extends SpringBootServletInitializer {
         SpringApplication.run(TelegDashApplication.class, args);
     }
     //todo, logging
-    //todo, check emails hack(+1..)
-    //todo, check emails before register new account
 }

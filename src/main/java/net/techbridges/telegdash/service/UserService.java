@@ -11,8 +11,11 @@ import net.techbridges.telegdash.configuration.token.TokenRepository;
 import net.techbridges.telegdash.configuration.token.TokenType;
 import net.techbridges.telegdash.dto.request.UserAuthRequest;
 import net.techbridges.telegdash.dto.response.UserAuthResponse;
+import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.User;
 import net.techbridges.telegdash.repository.UserRepository;
+import net.techbridges.telegdash.utils.EmailChecker;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Optional;
+
+import static java.net.Proxy.Type.HTTP;
 
 
 @Service
@@ -34,21 +39,26 @@ public class UserService {
 
 
     public UserAuthResponse register(UserAuthRequest user) {
-        User toSave = userRepository.save(User.builder()
-                .username(user.username())
-                .password(passwordEncoder.encode(user.password()))
-                .build());
-        /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
-         Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
-         Example:
-         Map<String, Object> currentDate = new HashMaps<>();
-         currentDate.put("now", LocalDateTime.now()....);
-         Claims could be : email, pictureLink, roles & groups , authentication time...
-        */
-        var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
-        var refreshToken = jwtService.generateRefreshToken(toSave);
-        saveUserToken(toSave, jwtToken);
-        return new UserAuthResponse(user.username(), jwtToken, refreshToken);
+        if(userRepository.findByUsername(EmailChecker.normalizeEmail(user.username())).isEmpty()){
+            User toSave = userRepository.save(User.builder()
+                    .username(user.username())
+                    .password(passwordEncoder.encode(user.password()))
+                    .build());
+            /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
+             Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
+             Example:
+             Map<String, Object> currentDate = new HashMaps<>();
+             currentDate.put("now", LocalDateTime.now()....);
+             Claims could be : email, pictureLink, roles & groups , authentication time...
+             */
+            var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
+            var refreshToken = jwtService.generateRefreshToken(toSave);
+            saveUserToken(toSave, jwtToken);
+            return new UserAuthResponse(user.username(), jwtToken, refreshToken);
+        }else {
+            throw new RequestException("The username provided already exist", HttpStatus.CONFLICT);
+        }
+
     }
 
     public UserAuthResponse authenticate(UserAuthRequest user) {

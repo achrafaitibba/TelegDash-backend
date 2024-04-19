@@ -1,6 +1,5 @@
 package net.techbridges.telegdash.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -26,6 +25,7 @@ public class User implements UserDetails {
     @Id
     private String username;
     private String password;
+    private Role role = Role.OWNER;
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 

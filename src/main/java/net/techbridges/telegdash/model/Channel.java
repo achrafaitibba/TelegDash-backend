@@ -14,7 +14,7 @@ public class Channel {
     @OneToMany
     private List<Member> members;
     @ManyToOne
-    private Account channelOwner;
+    private User channelOwner;
     @OneToMany
     private List<Attribute> attributes;
 }
