@@ -112,7 +112,7 @@ public class JwtService {
 
     /**use it to revoke all previous tokens for a new authentication */
     public void revokeAllUserTokens(String userName) {
-        var validUserTokens = tokenRepository.findAllValidTokensByUser(userName);
+        var validUserTokens = tokenRepository.findAllValidTokensByAccount(userName);
         if (validUserTokens.isEmpty())
             return;
         validUserTokens

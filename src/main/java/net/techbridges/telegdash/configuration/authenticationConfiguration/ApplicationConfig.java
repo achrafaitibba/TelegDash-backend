@@ -2,7 +2,7 @@ package net.techbridges.telegdash.configuration.authenticationConfiguration;
 
 
 import lombok.RequiredArgsConstructor;
-import net.techbridges.telegdash.repository.UserRepository;
+import net.techbridges.telegdash.repository.AccountRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,14 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserRepository accountRepository;
+    private final AccountRepository accountRepository;
 
 
 
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> accountRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Account not found"));
     }
 
     @Bean

@@ -9,11 +9,11 @@ import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.configuration.token.Token;
 import net.techbridges.telegdash.configuration.token.TokenRepository;
 import net.techbridges.telegdash.configuration.token.TokenType;
-import net.techbridges.telegdash.dto.request.UserAuthRequest;
-import net.techbridges.telegdash.dto.response.UserAuthResponse;
+import net.techbridges.telegdash.dto.request.AccountAuthRequest;
+import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.exception.RequestException;
-import net.techbridges.telegdash.model.User;
-import net.techbridges.telegdash.repository.UserRepository;
+import net.techbridges.telegdash.model.Account;
+import net.techbridges.telegdash.repository.AccountRepository;
 import net.techbridges.telegdash.utils.EmailChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,25 +24,24 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Optional;
 
-import static java.net.Proxy.Type.HTTP;
-
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AccountService {
 
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
 
 
-    public UserAuthResponse register(UserAuthRequest user) {
-        if(userRepository.findByUsername(EmailChecker.normalizeEmail(user.username())).isEmpty()){
-            User toSave = userRepository.save(User.builder()
-                    .username(user.username())
-                    .password(passwordEncoder.encode(user.password()))
+    public AccountAuthResponse register(AccountAuthRequest account) {
+        String email = EmailChecker.normalizeEmail(account.username());
+        if(accountRepository.findByUsername(email).isEmpty()){
+            Account toSave = accountRepository.save(Account.builder()
+                    .username(email)
+                    .password(passwordEncoder.encode(account.password()))
                     .build());
             /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
              Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
@@ -54,39 +53,39 @@ public class UserService {
             var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
             var refreshToken = jwtService.generateRefreshToken(toSave);
             saveUserToken(toSave, jwtToken);
-            return new UserAuthResponse(user.username(), jwtToken, refreshToken);
+            return new AccountAuthResponse(email, jwtToken, refreshToken);
         }else {
             throw new RequestException("The username provided already exist", HttpStatus.CONFLICT);
         }
 
     }
 
-    public UserAuthResponse authenticate(UserAuthRequest user) {
-        Optional<User> toAuthenticate = userRepository.findByUsername(user.username());
+    public AccountAuthResponse authenticate(AccountAuthRequest account) {
+        Optional<Account> toAuthenticate = accountRepository.findByUsername(account.username());
         if (!toAuthenticate.isPresent()) {
             System.out.println("Account doesn't exist");
-        } else if (!passwordEncoder.matches(user.password(), toAuthenticate.get().getPassword())) {
+        } else if (!passwordEncoder.matches(account.password(), toAuthenticate.get().getPassword())) {
             System.out.println("The password you entered is incorrect");
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.username(),
-                        user.password()
+                        account.username(),
+                        account.password()
                 )
         );
         var jwtToken = jwtService.generateToken(new HashMap<>(), toAuthenticate.get());
         var refreshToken = jwtService.generateRefreshToken(toAuthenticate.get());
         /** @Ignore revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);
-        saveUserToken(User.builder().username(user.username()).password(user.password()).build(), jwtToken);
-        return new UserAuthResponse(user.username(), jwtToken, refreshToken);
+        saveUserToken(Account.builder().username(account.username()).password(account.password()).build(), jwtToken);
+        return new AccountAuthResponse(account.username(), jwtToken, refreshToken);
 
     }
 
 
-    private void saveUserToken(User user, String jwtToken) {
+    private void saveUserToken(Account account, String jwtToken) {
         var token = Token.builder()
-                .user(user)
+                .account(account)
                 .token(jwtToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
@@ -110,12 +109,12 @@ public class UserService {
         /** Extract user email from JWT token; because we set the email as username in the user Model */
         username = jwtService.extractUsername(refreshToken);
         if (username != null) {
-            var user = this.userRepository.findByUsername(username).orElseThrow();
+            var user = this.accountRepository.findByUsername(username).orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var newToken = jwtService.generateToken(new HashMap<>(), user);
                 jwtService.revokeAllUserTokens(user.getUsername());
                 saveUserToken(user, newToken);
-                var _response = new UserAuthResponse(username, newToken, refreshToken);
+                var _response = new AccountAuthResponse(username, newToken, refreshToken);
                 new ObjectMapper()
                         .writeValue(
                                 response.getOutputStream(),

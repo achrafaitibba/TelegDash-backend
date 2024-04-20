@@ -3,6 +3,7 @@ package net.techbridges.telegdash.configuration.authenticationConfiguration;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -23,7 +24,7 @@ public class SecurityConfigurationFilter {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutService logoutHandler;
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity)throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, ServerProperties serverProperties)throws Exception{
         httpSecurity
                 /** to allow cors from all origins */
                 .csrf()
@@ -34,9 +35,9 @@ public class SecurityConfigurationFilter {
                 /** authorized endpoints: doesn't require authentication */
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/v1/user/register",
-                        "/api/v1/user/refresh-token",
-                        "/api/v1/user/authenticate"
+                        "/api/v1.0/account/register",
+                        "/api/v1.0/account/refresh-token",
+                        "/api/v1.0/account/authenticate"
                 )
                 .permitAll()
                 //////////////////////

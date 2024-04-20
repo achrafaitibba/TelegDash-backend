@@ -20,13 +20,13 @@ import java.util.List;
 @Data
 @Entity
 @Builder
-public class User implements UserDetails {
+public class Account implements UserDetails {
 
     @Id
     private String username;
     private String password;
     private Role role = Role.OWNER;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "account")
     private List<Token> tokens;
 
 

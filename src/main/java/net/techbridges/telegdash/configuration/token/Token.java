@@ -1,6 +1,6 @@
 package net.techbridges.telegdash.configuration.token;
 
-import net.techbridges.telegdash.model.User;
+import net.techbridges.telegdash.model.Account;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +28,6 @@ public class Token {
     private boolean revoked;
 
     @ManyToOne
-    @JoinColumn(name = "user")
-    private User user;
+    @JoinColumn(name = "account")
+    private Account account;
 }
