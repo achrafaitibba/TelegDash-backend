@@ -14,7 +14,7 @@ import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
 import net.techbridges.telegdash.repository.AccountRepository;
-import net.techbridges.telegdash.utils.EmailChecker;
+import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -37,7 +37,7 @@ public class AccountService {
 
 
     public AccountAuthResponse register(AccountAuthRequest account) {
-        String email = EmailChecker.normalizeEmail(account.username());
+        String email = InputChecker.normalizeEmail(account.username());
         if(accountRepository.findByUsername(email).isEmpty()){
             Account toSave = accountRepository.save(Account.builder()
                     .username(email)
