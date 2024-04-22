@@ -1,6 +1,6 @@
 package net.techbridges.telegdash.utils;
 
-import net.techbridges.telegdash.model.GroupType;
+import net.techbridges.telegdash.model.enums.GroupType;
 
 public class InputChecker {
 
