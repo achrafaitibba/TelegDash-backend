@@ -61,15 +61,16 @@ public class AccountService {
     }
 
     public AccountAuthResponse authenticate(AccountAuthRequest account) {
-        Optional<Account> toAuthenticate = accountRepository.findByUsername(account.username());
+        String email = InputChecker.normalizeEmail(account.username());
+        Optional<Account> toAuthenticate = accountRepository.findByUsername(email);
         if (!toAuthenticate.isPresent()) {
-            System.out.println("Account doesn't exist");
+            throw new RequestException("Account doesn't exist", HttpStatus.CONFLICT);
         } else if (!passwordEncoder.matches(account.password(), toAuthenticate.get().getPassword())) {
-            System.out.println("The password you entered is incorrect");
+            throw new RequestException("The password you entered is incorrect", HttpStatus.CONFLICT);
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        account.username(),
+                        email,
                         account.password()
                 )
         );
@@ -77,8 +78,8 @@ public class AccountService {
         var refreshToken = jwtService.generateRefreshToken(toAuthenticate.get());
         /** @Ignore revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);
-        saveUserToken(Account.builder().username(account.username()).password(account.password()).build(), jwtToken);
-        return new AccountAuthResponse(account.username(), jwtToken, refreshToken);
+        saveUserToken(Account.builder().username(email).password(account.password()).build(), jwtToken);
+        return new AccountAuthResponse(email, jwtToken, refreshToken);
 
     }
 
