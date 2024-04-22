@@ -1,7 +1,6 @@
 package net.techbridges.telegdash.model;
 
 import jakarta.persistence.*;
-import net.techbridges.telegdash.model.enums.Member;
 
 import java.util.List;
 

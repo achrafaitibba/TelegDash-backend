@@ -1,7 +1,8 @@
-package net.techbridges.telegdash.model.enums;
+package net.techbridges.telegdash.model;
 
 import jakarta.persistence.*;
-import net.techbridges.telegdash.model.Channel;
+import net.techbridges.telegdash.model.enums.BillingFrequency;
+import net.techbridges.telegdash.model.enums.MemberStatus;
 
 @Entity
 public class Member {
