@@ -9,7 +9,7 @@ public class Member {
     @Id
     private Long memberId;
     @Column(unique=true)
-    private String telegramId;
+    private String telegramMemberId;
     private String username;
     private String firstName;
     private String lastName;

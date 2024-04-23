@@ -40,5 +40,8 @@ public enum Niche {
     MOVIES,
     WRITING,
     PRIVATE_CONTENT,
-    SOFTWARE
+    SOFTWARE,
+    UNDEFINED
+
+    //todo, reduce this list
 }
