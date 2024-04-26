@@ -3,6 +3,7 @@ package net.techbridges.telegdash.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,8 @@ public class Account implements UserDetails {
     private String username;
     private String password;
     private Role role = Role.OWNER;
+    @OneToOne
+    private Plan plan; //todo, upgrade/downgrade plan
     @OneToMany(mappedBy = "account")
     private List<Token> tokens;
 
