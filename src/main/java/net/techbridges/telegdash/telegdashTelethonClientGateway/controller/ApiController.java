@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.telegdashTelethonClientGateway.dataSource;
+package net.techbridges.telegdash.telegdashTelethonClientGateway.controller;
 
 
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class ApiGateway {
+public class ApiController {
 
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeaders;
