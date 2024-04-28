@@ -16,4 +16,5 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, make bot auto-join groups via link, if possible, other wise, auto add it
     //todo, channel username parser
     //todo, check if bot joined a group/channel
+    //todo, use jackson to map data coming from telegdash.py api
 }

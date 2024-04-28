@@ -14,6 +14,7 @@ import net.techbridges.telegdash.model.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,7 +32,8 @@ public class Account implements UserDetails {
     private Role role = Role.OWNER;
     @OneToOne
     private Plan plan; //todo, upgrade/downgrade plan
-    private PaymentType paymentType;
+    @OneToMany
+    private List<Payment> payments ;
     @OneToMany(mappedBy = "account")
     private List<Token> tokens;
 
