@@ -1,19 +1,13 @@
-package net.techbridges.telegdash.telegdashTelethonClientGateway.clientGatewayConfiguration;
+package net.techbridges.telegdash.configuration;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-
 @Configuration
-public class Config {
-    @Value("${api.auth.username}")
-    private String username;
-    @Value("${api.auth.password}")
-    private String password;
+public class ApplicationConfig {
 
     @Bean
     public RestTemplate restTemplate() {
@@ -23,7 +17,7 @@ public class Config {
     @Bean
     public HttpHeaders httpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(username, password);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         return headers;
     }
 }

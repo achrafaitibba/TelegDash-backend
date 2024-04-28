@@ -1,6 +1,7 @@
 package net.techbridges.telegdash.telegdashTelethonClientGateway.service;
 
 
+import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.model.BasicMember;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,17 +15,19 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
     @Value("${api.telegdash}")
     private String BASEURL;
+    private final AuthenticationService auth;
 
     public String urlBuilder() {
         return BASEURL.concat("/members");
     }
 
-    public Integer getMembersCount(HttpHeaders httpHeaders, RestTemplate restTemplate, String channelId) {
+    public Integer getMembersCount(RestTemplate restTemplate, String channelId) {
         try {
-            HttpEntity<Object> requestEntity = new HttpEntity<>(channelId, httpHeaders);
+            HttpEntity<Object> requestEntity = new HttpEntity<>(channelId, auth.authenticate());
             ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
                     urlBuilder().concat("/" + channelId + "/count"),
                     HttpMethod.GET,
@@ -38,12 +41,12 @@ public class MemberService {
     }
 
 
-    public List<BasicMember> getAllMembers(HttpHeaders httpHeaders, RestTemplate restTemplate, String channelId, double limit) {
+    public List<BasicMember> getAllMembers(RestTemplate restTemplate, String channelId, double limit) {
         try {
             HashMap<String, Object> requestBody = new HashMap<>();
             requestBody.put("channel_id", channelId);
             requestBody.put("limit", limit);
-            HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+            HttpEntity<HashMap<String, Object>> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
             ResponseEntity<List> responseEntity = restTemplate.exchange(
                     urlBuilder(),
                     HttpMethod.POST,
@@ -67,14 +70,14 @@ public class MemberService {
     }
 
 
-    public int kickMember(HttpHeaders httpHeaders, RestTemplate restTemplate, String channelId, List<String> memberIds) {
+    public int kickMember(RestTemplate restTemplate, String channelId, List<String> memberIds) {
         try {
             memberIds.forEach(
                     memberId -> {
                         HashMap<String, Object> requestBody = new HashMap<>();
                         requestBody.put("channel_id", channelId);
                         requestBody.put("member_id", memberId);
-                        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+                        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
                         ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
                                 urlBuilder().concat("/kick"),
                                 HttpMethod.POST,
