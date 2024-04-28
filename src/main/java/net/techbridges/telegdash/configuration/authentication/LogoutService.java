@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.configuration.authenticationConfiguration;
+package net.techbridges.telegdash.configuration.authentication;
 
 
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.configuration.authenticationConfiguration;
+package net.techbridges.telegdash.configuration.authentication;
 
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
-public class ApplicationConfig {
+public class AuthenticationConfig {
     private final AccountRepository accountRepository;
 
 

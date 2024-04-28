@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.configuration.authenticationConfiguration;
+package net.techbridges.telegdash.configuration.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
