@@ -1,7 +1,5 @@
 package net.techbridges.telegdash.paymentService.paypal.clientGatewayConfiguration;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,14 +28,7 @@ public class PaymentConfig {
 //        return headers;
 //    }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS, false);
-        return objectMapper;
-    }
+
 
 
 
