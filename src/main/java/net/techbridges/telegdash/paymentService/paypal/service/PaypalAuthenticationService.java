@@ -7,6 +7,7 @@ import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class PaypalAuthenticationService {
+
     @Value("${payment.paypal.client-id}")
     private String clientId;
     @Value("${payment.paypal.secret}")
@@ -41,6 +43,15 @@ public class PaypalAuthenticationService {
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, authenticate());
         String response = restTemplate.postForObject(baseUrl.getBaseUrl() + "v1/oauth2/token", requestEntity, String.class);
         return objectMapper.readValue(response, Authentication.class);
+    }
 
+
+    public void terminateToken(Authentication authentication) throws Exception {
+        httpHeaders.add("Authorization", authentication.getAccessToken());
+        LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
+        requestBody.add("token", authentication.getAccessToken());
+        requestBody.add("token_type_hint", "ACCESS_TOKEN");
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+        restTemplate.exchange(baseUrl.getBaseUrl() + "v1/oauth2/token/terminate", HttpMethod.POST, requestEntity, String.class);
     }
 }
