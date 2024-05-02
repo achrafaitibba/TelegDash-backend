@@ -1,0 +1,10 @@
+package net.techbridges.telegdash.paymentService.paypal.model;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class Link {
+    @JsonProperty("href")
+    private String href;
+    @JsonProperty("rel")
+    private String rel;
+}
