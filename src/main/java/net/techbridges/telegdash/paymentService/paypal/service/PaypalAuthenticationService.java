@@ -46,10 +46,10 @@ public class PaypalAuthenticationService {
     }
 
 
-    public void terminateToken(Authentication authentication) throws Exception {
-        httpHeaders.add("Authorization", authentication.getAccessToken());
+    public void terminateToken(String authenticationToken) throws Exception {
+        httpHeaders.add("Authorization", authenticationToken);
         LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        requestBody.add("token", authentication.getAccessToken());
+        requestBody.add("token", authenticationToken);
         requestBody.add("token_type_hint", "ACCESS_TOKEN");
         HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
         restTemplate.exchange(baseUrl.getBaseUrl() + "v1/oauth2/token/terminate", HttpMethod.POST, requestEntity, String.class);
