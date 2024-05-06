@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -29,6 +30,7 @@ public class PaypalAuthenticationService {
 
 
     public HttpHeaders authenticate() {
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         httpHeaders.setBasicAuth(clientId, secret);
         return httpHeaders;
     }
