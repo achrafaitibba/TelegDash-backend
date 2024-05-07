@@ -16,7 +16,6 @@ import java.util.Map;
 public class SubscriptionService {
     /**
      * todo
-     * create
      * check status
      * cancel
      * upgrade
