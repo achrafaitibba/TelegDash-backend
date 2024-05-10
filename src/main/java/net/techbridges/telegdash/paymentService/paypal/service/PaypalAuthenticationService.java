@@ -48,6 +48,7 @@ public class PaypalAuthenticationService {
     }
 
 
+    //todo, terminate token after each request
     public void terminateToken(String authenticationToken) throws Exception {
         httpHeaders.add("Authorization", authenticationToken);
         LinkedMultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();

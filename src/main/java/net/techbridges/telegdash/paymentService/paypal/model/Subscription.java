@@ -16,6 +16,7 @@ public class Subscription {
     private String planId;
     @JsonProperty("start_time")
     private String startTime;
+    @JsonProperty("subscriber")
     private Subscriber subscriber;
     @JsonProperty("create_time")
     private String createTime;

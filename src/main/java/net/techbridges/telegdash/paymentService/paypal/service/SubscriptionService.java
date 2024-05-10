@@ -6,6 +6,7 @@ import net.techbridges.telegdash.paymentService.paypal.dto.request.CreateSubscri
 import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -13,9 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api")
 public class SubscriptionService {
     /**
      * todo
+     * subs details
      * check status
      * cancel
      * upgrade
@@ -26,10 +30,16 @@ public class SubscriptionService {
     private final RestTemplate restTemplate;
     private final BaseUrl baseUrl;
 
-    public Subscription createSubscription(CreateSubscriptionRequest subscription) throws Exception {
+
+    private void requestHeaders()throws Exception{
+        httpHeaders.clear();
         String token = authenticationService.generateToken().getAccessToken();
-        httpHeaders.add("Prefer", "return=representation");
         httpHeaders.add("Authorization", "Bearer " + token);
+    }
+    @PostMapping
+    public Subscription createSubscription(@RequestBody CreateSubscriptionRequest subscription) throws Exception {
+        requestHeaders();
+        httpHeaders.add("Prefer", "return=representation");
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON_UTF8));
         Map<String, Object> requestBody = new HashMap<>();
@@ -48,6 +58,7 @@ public class SubscriptionService {
         );
         return response.getBody();
     }
+
 
 
 }
