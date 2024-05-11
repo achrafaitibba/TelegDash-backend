@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Subscription {
     @JsonProperty("status")
-    private String status;
+    private SubscriptionStatus status;
     @JsonProperty("status_update_time")
     private String statusUpdateTime;
     @JsonProperty("id")

@@ -6,7 +6,6 @@ import net.techbridges.telegdash.paymentService.paypal.dto.request.CreateSubscri
 import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -14,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/api")
 public class SubscriptionService {
     /**
      * todo
@@ -24,6 +21,7 @@ public class SubscriptionService {
      * cancel
      * upgrade
      * downgrade
+     * get approved link to capture payment
      */
     private final PaypalAuthenticationService authenticationService;
     private final HttpHeaders httpHeaders;
@@ -36,8 +34,7 @@ public class SubscriptionService {
         String token = authenticationService.generateToken().getAccessToken();
         httpHeaders.add("Authorization", "Bearer " + token);
     }
-    @PostMapping
-    public Subscription createSubscription(@RequestBody CreateSubscriptionRequest subscription) throws Exception {
+    public Subscription createSubscription(CreateSubscriptionRequest subscription) throws Exception {
         requestHeaders();
         httpHeaders.add("Prefer", "return=representation");
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -60,5 +57,17 @@ public class SubscriptionService {
     }
 
 
+
+    public Subscription getSubscription(String subscriptionId) throws Exception {
+        requestHeaders();
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(httpHeaders);
+        ResponseEntity<Subscription> response =  restTemplate.exchange(
+                baseUrl.getBaseUrl() + "v1/billing/subscriptions/"+subscriptionId,
+                HttpMethod.GET,
+                requestEntity,
+                Subscription.class
+        );
+        return response.getBody();
+    }
 
 }
