@@ -1,4 +1,4 @@
-package net.techbridges.telegdash.paymentService.paypal.dto.request;
+package net.techbridges.telegdash.paymentService.paypal.dto;
 
 
 public record ReviseSubscriptionRequest(

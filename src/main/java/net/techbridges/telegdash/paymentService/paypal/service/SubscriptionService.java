@@ -1,16 +1,14 @@
 
 package net.techbridges.telegdash.paymentService.paypal.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.exception.RequestException;
-import net.techbridges.telegdash.paymentService.paypal.dto.request.CreateSubscriptionRequest;
-import net.techbridges.telegdash.paymentService.paypal.dto.request.ReviseSubscriptionRequest;
+import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionRequest;
+import net.techbridges.telegdash.paymentService.paypal.dto.ReviseSubscriptionRequest;
 import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
 import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -18,13 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("api")
 public class SubscriptionService {
-    /**
-     * todo
-     * cancel
-     */
     private final PaypalAuthenticationService authenticationService;
     private final HttpHeaders httpHeaders;
     private final RestTemplate restTemplate;
