@@ -4,8 +4,13 @@ package net.techbridges.telegdash.paymentService.paypal.service;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.paymentService.paypal.dto.request.CreateSubscriptionRequest;
 import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
+import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import org.springframework.http.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -13,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("api")
 public class SubscriptionService {
     /**
      * todo
@@ -69,5 +76,15 @@ public class SubscriptionService {
         );
         return response.getBody();
     }
+
+    public String approveSubscription(Subscription subscription) throws Exception {
+        return subscription.getLinks().stream()
+                .filter(link -> link.getRel().equals("approve"))
+                .findFirst()
+                .map(Link::getHref)
+                .orElse("");
+    }
+
+
 
 }

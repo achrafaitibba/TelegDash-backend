@@ -1,7 +1,9 @@
 package net.techbridges.telegdash.paymentService.paypal.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
 public class Link {
     @JsonProperty("href")
     private String href;
