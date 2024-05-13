@@ -1,13 +1,20 @@
 package net.techbridges.telegdash.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Data;
 import net.techbridges.telegdash.model.enums.ReminderFrequency;
 
+import java.util.UUID;
+
 @Entity
+@Data
 public class Plan {
     @Id
+    @GeneratedValue
     private Long planId;
+    private String paypalPlanId;
     private String planName;
     private String description;
     private Integer channels;

@@ -9,12 +9,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.techbridges.telegdash.configuration.token.Token;
-import net.techbridges.telegdash.model.enums.PaymentType;
+import net.techbridges.telegdash.model.enums.AccountType;
 import net.techbridges.telegdash.model.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,13 +30,12 @@ public class Account implements UserDetails {
     private String password;
     private Role role = Role.OWNER;
     @OneToOne
-    private Plan plan; //todo, upgrade/downgrade plan
+    private Plan plan;
+    private AccountType accountType;
     @OneToMany
     private List<Payment> payments ;
     @OneToMany(mappedBy = "account")
     private List<Token> tokens;
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;

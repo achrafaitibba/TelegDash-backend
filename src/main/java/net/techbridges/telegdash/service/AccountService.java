@@ -10,6 +10,7 @@ import net.techbridges.telegdash.configuration.token.Token;
 import net.techbridges.telegdash.configuration.token.TokenRepository;
 import net.techbridges.telegdash.configuration.token.TokenType;
 import net.techbridges.telegdash.dto.request.AccountAuthRequest;
+import net.techbridges.telegdash.dto.request.AccountRegisterRequest;
 import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
@@ -36,7 +37,7 @@ public class AccountService {
     private final AuthenticationManager authenticationManager;
 
 
-    public AccountAuthResponse register(AccountAuthRequest account) {
+    public AccountAuthResponse register(AccountRegisterRequest account) {
         String email = InputChecker.normalizeEmail(account.username());
         if(accountRepository.findByUsername(email).isEmpty()){
             Account toSave = accountRepository.save(Account.builder()
@@ -76,7 +77,7 @@ public class AccountService {
         );
         var jwtToken = jwtService.generateToken(new HashMap<>(), toAuthenticate.get());
         var refreshToken = jwtService.generateRefreshToken(toAuthenticate.get());
-        /** @Ignore revoking previous tokens in case user is connected in another device*/
+        /** revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);
         saveUserToken(Account.builder().username(email).password(account.password()).build(), jwtToken);
         return new AccountAuthResponse(email, jwtToken, refreshToken);

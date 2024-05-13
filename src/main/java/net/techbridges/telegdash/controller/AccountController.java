@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.dto.request.AccountAuthRequest;
+import net.techbridges.telegdash.dto.request.AccountRegisterRequest;
 import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.service.AccountService;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class AccountController {
 
 
     @PostMapping("/register")
-    public AccountAuthResponse register(@RequestBody AccountAuthRequest account){
+    public AccountAuthResponse register(@RequestBody AccountRegisterRequest account){
         return accountService.register(account);
     }
 
