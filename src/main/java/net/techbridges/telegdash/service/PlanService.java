@@ -5,6 +5,8 @@ import net.techbridges.telegdash.model.Plan;
 import net.techbridges.telegdash.repository.PlanRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PlanService {
@@ -15,12 +17,12 @@ public class PlanService {
         return planRepository.save(plan);
     }
 
-    public Plan updatePlan(Plan plan) {
-        return planRepository.save(plan);
-    }
-    public void deletePlan(Plan plan) {
-        planRepository.delete(plan);
+    public void deletePlan(Long id) {
+        planRepository.deleteById(id);
     }
 
+    public List<Plan> getAllPlans() {
+        return planRepository.findAll();
+    }
 
 }

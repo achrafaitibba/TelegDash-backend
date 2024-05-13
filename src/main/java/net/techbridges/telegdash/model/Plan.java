@@ -6,8 +6,6 @@ import jakarta.persistence.Id;
 import lombok.Data;
 import net.techbridges.telegdash.model.enums.ReminderFrequency;
 
-import java.util.UUID;
-
 @Entity
 @Data
 public class Plan {
