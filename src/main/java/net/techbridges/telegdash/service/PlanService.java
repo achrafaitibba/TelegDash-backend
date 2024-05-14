@@ -25,4 +25,8 @@ public class PlanService {
         return planRepository.findAll();
     }
 
+    public Plan getPlan(Long id) {
+        return planRepository.findById(id).orElse(null);
+    }
+
 }

@@ -23,4 +23,5 @@ public class Plan {
     private Integer customColumns;
     private Boolean kickingMember;
     private Boolean autoKickingMember;
+    private Boolean isActive = true;
 }

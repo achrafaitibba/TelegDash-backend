@@ -28,4 +28,11 @@ public class PlanController {
     public List<Plan> getAllPlans() {
         return planService.getAllPlans();
     }
+
+    @GetMapping("/{id}")
+    public Plan getPlan(@PathVariable Long id) {
+        return planService.getPlan(id);
+    }
+
+
 }
