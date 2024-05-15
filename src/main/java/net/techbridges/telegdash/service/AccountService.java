@@ -12,9 +12,12 @@ import net.techbridges.telegdash.configuration.token.TokenType;
 import net.techbridges.telegdash.dto.request.AccountAuthRequest;
 import net.techbridges.telegdash.dto.request.AccountRegisterRequest;
 import net.techbridges.telegdash.dto.response.AccountAuthResponse;
+import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
+import net.techbridges.telegdash.model.enums.AccountType;
 import net.techbridges.telegdash.repository.AccountRepository;
+import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +25,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -35,27 +40,38 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
+    private final PlanRepository planRepository;
 
-
-    public AccountAuthResponse register(AccountRegisterRequest account) {
+    public AccountRegisterResponse register(AccountRegisterRequest account) {
         String email = InputChecker.normalizeEmail(account.username());
-        if(accountRepository.findByUsername(email).isEmpty()){
-            Account toSave = accountRepository.save(Account.builder()
-                    .username(email)
-                    .password(passwordEncoder.encode(account.password()))
-                    .build());
-            /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
-             Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
-             Example:
-             Map<String, Object> currentDate = new HashMaps<>();
-             currentDate.put("now", LocalDateTime.now()....);
-             Claims could be : email, pictureLink, roles & groups , authentication time...
-             */
-            var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
-            var refreshToken = jwtService.generateRefreshToken(toSave);
-            saveUserToken(toSave, jwtToken);
-            return new AccountAuthResponse(email, jwtToken, refreshToken);
-        }else {
+        if (accountRepository.findByUsername(email).isEmpty()) {
+            if (planRepository.findById(account.planId()).get().getIsActive()) {
+                LocalDate currentDate = LocalDate.now();
+                LocalDate freeTrialEndDate = currentDate.plusDays(7);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                String formattedDate = freeTrialEndDate.format(formatter);
+                Account toSave = accountRepository.save(Account.builder()
+                        .username(email)
+                        .password(passwordEncoder.encode(account.password()))
+                        .plan(planRepository.findById(account.planId()).get())
+                        .accountType(AccountType.TRIAL)
+                        .freeTrialEndDate(formattedDate)
+                        .build());
+                /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
+                 Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
+                 Example:
+                 Map<String, Object> currentDate = new HashMaps<>();
+                 currentDate.put("now", LocalDateTime.now()....);
+                 Claims could be : email, pictureLink, roles & groups , authentication time...
+                 */
+                var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
+                var refreshToken = jwtService.generateRefreshToken(toSave);
+                saveUserToken(toSave, jwtToken);
+                return new AccountRegisterResponse(email, formattedDate, toSave.getPlan().getPlanId(), toSave.getAccountType().toString(), jwtToken, refreshToken);
+            } else {
+                throw new RequestException("The plan is not Active for now", HttpStatus.CONFLICT);
+            }
+        } else {
             throw new RequestException("The username provided already exist", HttpStatus.CONFLICT);
         }
 
@@ -95,7 +111,6 @@ public class AccountService {
                 .build();
         tokenRepository.save(token);
     }
-
 
 
     public void refreshToken(HttpServletRequest request,
