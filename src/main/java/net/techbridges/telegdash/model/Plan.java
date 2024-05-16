@@ -1,9 +1,8 @@
 package net.techbridges.telegdash.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import net.techbridges.telegdash.model.enums.PlanType;
 import net.techbridges.telegdash.model.enums.ReminderFrequency;
 
 @Entity
@@ -12,6 +11,8 @@ public class Plan {
     @Id
     @GeneratedValue
     private Long planId;
+    @Enumerated(EnumType.STRING)
+    private PlanType planType;
     private String paypalPlanId;
     private String planName;
     private String description;

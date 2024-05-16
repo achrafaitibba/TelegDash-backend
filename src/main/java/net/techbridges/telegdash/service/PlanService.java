@@ -2,6 +2,7 @@ package net.techbridges.telegdash.service;
 
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.model.Plan;
+import net.techbridges.telegdash.model.enums.PlanType;
 import net.techbridges.telegdash.repository.PlanRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,4 +30,7 @@ public class PlanService {
         return planRepository.findById(id).orElse(null);
     }
 
+    public Plan findTrialPlan() {
+        return planRepository.findByPlanType(PlanType.TRIAL).orElseThrow();
+    }
 }

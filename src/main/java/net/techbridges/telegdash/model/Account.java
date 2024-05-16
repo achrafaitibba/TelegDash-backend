@@ -1,9 +1,6 @@
 package net.techbridges.telegdash.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,9 +28,12 @@ public class Account implements UserDetails {
     private Role role = Role.OWNER;
     @OneToOne
     private Plan plan;
+    @OneToOne
+    private Plan trialPlan;
     private AccountType accountType;
     @OneToMany
-    private List<Payment> payments ;
+    private List<Payment> payments;
+    private String freeTrialEndDate;
     @OneToMany(mappedBy = "account")
     private List<Token> tokens;
     @Override
