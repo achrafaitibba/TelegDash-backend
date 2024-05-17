@@ -9,7 +9,6 @@ import net.techbridges.telegdash.dto.request.AccountRegisterRequest;
 import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.service.AccountService;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

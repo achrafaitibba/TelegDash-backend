@@ -36,4 +36,14 @@ public class ApiController {
         return adminService.sendMessageToAdmin(restTemplate, chatId, message);
     }
 
+    /**
+     * 1 = BOT is admin
+     * 2 = Bot is admin and have ban_user right > for groups
+     * 3 = Bot is admin and doesn't have ban_user right > for groups
+     * 4 = Bot is not admin
+     */
+    public Integer checkAdminStatus(String channelId){
+        return adminService.checkAdminStatus(restTemplate, channelId);
+    }
+
 }

@@ -76,9 +76,6 @@ public class AccountService {
         }
 
     }
-
-
-
     public AccountAuthResponse authenticate(AccountAuthRequest account) {
         String email = InputChecker.normalizeEmail(account.username());
         Optional<Account> toAuthenticate = accountRepository.findByUsername(email);

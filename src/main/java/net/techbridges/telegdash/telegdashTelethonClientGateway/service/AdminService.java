@@ -35,4 +35,15 @@ public class AdminService {
         );
         return String.valueOf(responseEntity.getBody().get("message"));
     }
+
+    public Integer checkAdminStatus(RestTemplate restTemplate, String channelId){
+        HttpEntity<Object> requestEntity = new HttpEntity<>(channelId, auth.authenticate());
+        ResponseEntity<Integer> responseEntity = restTemplate.exchange(
+                urlBuilder().concat("/status/"+channelId),
+                HttpMethod.GET,
+                requestEntity,
+                Integer.class
+        );
+        return responseEntity.getBody();
+    }
 }
