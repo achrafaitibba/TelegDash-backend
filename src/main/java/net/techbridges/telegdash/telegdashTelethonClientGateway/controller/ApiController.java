@@ -6,6 +6,7 @@ import net.techbridges.telegdash.telegdashTelethonClientGateway.model.BasicMembe
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.AdminService;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.MemberService;
 import org.springframework.stereotype.Service;
+
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -28,8 +29,8 @@ public class ApiController {
         return memberService.getAllMembers(restTemplate, channelId, limit);
     }
 
-    public int kickMember(String channelId, List<String> memberIds) {
-        return memberService.kickMember(restTemplate, channelId, memberIds);
+    public int kickMembers(String channelId, List<String> memberIds) {
+        return memberService.kickMembers(restTemplate, channelId, memberIds);
     }
 
     public String sendMessageToAdmin(String chatId, String message) {

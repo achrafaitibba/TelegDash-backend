@@ -70,24 +70,19 @@ public class MemberService {
     }
 
 
-    public int kickMember(RestTemplate restTemplate, String channelId, List<String> memberIds) {
+    public int kickMembers(RestTemplate restTemplate, String channelId, List<String> memberIds) {
         try {
-            memberIds.forEach(
-                    memberId -> {
-                        HashMap<String, Object> requestBody = new HashMap<>();
-                        requestBody.put("channel_id", channelId);
-                        requestBody.put("member_id", memberId);
-                        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
-                        ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
-                                urlBuilder().concat("/kick"),
-                                HttpMethod.POST,
-                                requestEntity,
-                                HashMap.class
-                        );
-                        System.out.println(responseEntity.getBody().toString());
-                    }
+            HashMap<String, Object> requestBody = new HashMap<>();
+            requestBody.put("channel_id", channelId);
+            requestBody.put("member_ids", memberIds);
+            HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
+            ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
+                    urlBuilder().concat("/kick"),
+                    HttpMethod.POST,
+                    requestEntity,
+                    HashMap.class
             );
-
+            System.out.println(responseEntity.getBody().toString());
             return 1;
         } catch (HttpClientErrorException e) {
             throw new RequestException(e.getResponseBodyAsString().substring(1, e.getResponseBodyAsString().length() - 2), HttpStatus.valueOf(e.getStatusCode().value()));
