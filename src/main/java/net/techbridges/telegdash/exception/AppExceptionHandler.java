@@ -16,7 +16,6 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {RequestException.class})
     public ResponseEntity<Object> handleApiRequestException(RequestException e){
-        Serializable serializable = e.getMessage();
         ApiException apiException = new ApiException(
                 e.getMessage(),
                 e.getHttpStatus(),
