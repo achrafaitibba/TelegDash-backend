@@ -16,7 +16,6 @@ import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
 import net.techbridges.telegdash.model.enums.AccountType;
 import net.techbridges.telegdash.repository.AccountRepository;
-import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
