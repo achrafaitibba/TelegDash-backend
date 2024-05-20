@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ApiController {
+public class TelegDashPyApiController {
 
     private final MemberService memberService;
     private final AdminService adminService;
