@@ -11,7 +11,6 @@ public class Plan {
     @Id
     @GeneratedValue
     private Long planId;
-    @Enumerated(EnumType.STRING)
     private PlanType planType;
     private String paypalPlanId;
     private String planName;

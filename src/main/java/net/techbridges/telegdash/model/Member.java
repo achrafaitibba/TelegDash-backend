@@ -14,7 +14,9 @@ public class Member {
     @Column(unique=true)
     private String telegramMemberId;
     private String username;
+    @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;
+    @Enumerated(EnumType.STRING)
     private BillingFrequency billingFrequency;
     private Integer billingPeriod;
     private Date startDate;

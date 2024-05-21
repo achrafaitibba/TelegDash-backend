@@ -38,7 +38,8 @@ public class SecurityConfigurationFilter {
                         "/api/v1.0/account/register",
                         "/api/v1.0/account/refresh-token",
                         "/api/v1.0/account/authenticate",
-                        "/api/v1.0/plans/**"
+                        "/api/v1.0/plans/**",
+                        "/api/v1.0/channels/status/**"
                 )
                 .permitAll()
                 //////////////////////

@@ -13,11 +13,8 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     }
     //todo, logging
     //todo, limit max members, no more than 20k for example for each account
-    //todo, make bot auto-join groups via link, if possible, other wise, auto add it
-    //todo, channel username parser
-    //todo, check if bot joined a group/channel
+    //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, use jackson to map data coming from telegdash.py api
     //todo, check channels infos before downgrading plans
-    //todo, kick list of members (new endpoint > telegDash.py)
 
 }
