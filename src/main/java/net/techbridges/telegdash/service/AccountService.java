@@ -15,6 +15,7 @@ import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
 import net.techbridges.telegdash.model.enums.AccountType;
+import net.techbridges.telegdash.model.enums.Role;
 import net.techbridges.telegdash.repository.AccountRepository;
 import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
@@ -51,6 +52,7 @@ public class AccountService {
                 String formattedDate = freeTrialEndDate.format(formatter);
                 Account toSave = accountRepository.save(Account.builder()
                         .username(email)
+                        .role(Role.OWNER)
                         .password(passwordEncoder.encode(account.password()))
                         .plan(planService.getPlan(account.planId()))
                         .trialPlan(planService.findTrialPlan())

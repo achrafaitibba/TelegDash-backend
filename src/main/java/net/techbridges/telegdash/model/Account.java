@@ -25,7 +25,7 @@ public class Account implements UserDetails {
     @Id
     private String username;
     private String password;
-    private Role role = Role.OWNER;
+    private Role role;
     @OneToOne
     private Plan plan;
     @OneToOne
