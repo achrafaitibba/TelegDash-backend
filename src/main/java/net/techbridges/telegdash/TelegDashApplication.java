@@ -11,7 +11,7 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(TelegDashApplication.class, args);
     }
-    //todo, logging
+    //todo, logging with AOP, create custom annotation
     //todo, limit max members, no more than 20k for example for each account
     //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, use jackson to map data coming from telegdash.py api
