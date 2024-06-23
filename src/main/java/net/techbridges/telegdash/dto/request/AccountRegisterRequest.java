@@ -1,7 +1,7 @@
 package net.techbridges.telegdash.dto.request;
 
 public record AccountRegisterRequest(
-        String username,
+        String email,
         String password,
         Long planId
 ) {

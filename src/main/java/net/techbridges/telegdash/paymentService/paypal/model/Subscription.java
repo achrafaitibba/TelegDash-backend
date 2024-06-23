@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Subscription {
+    @JsonProperty("id")
+    private String id;
     @JsonProperty("status")
     private SubscriptionStatus status;
     @JsonProperty("status_update_time")
     private String statusUpdateTime;
-    @JsonProperty("id")
-    private String id;
     @JsonProperty("plan_id")
     private String planId;
     @JsonProperty("start_time")

@@ -50,47 +50,57 @@ public class AccountService {
 
     @Transactional
     public AccountRegisterResponse register(AccountRegisterRequest account) throws Exception{
-        String email = InputChecker.normalizeEmail(account.username());
-        if (accountRepository.findByUsername(email).isEmpty()) {
+        String email = account.email();
+        if (accountRepository.findByEmail(email).isEmpty()) {
             Plan usedPlan = planService.getPlan(account.planId());
+            Account toSave = accountToRegister(account);
             if (usedPlan.getIsActive()) {
-                Account toSave = accountRepository.save(Account.builder()
-                        .username(email)
-                        .role(Role.OWNER)
-                        .password(passwordEncoder.encode(account.password()))
-                        .plan(planService.getPlan(account.planId()))
-                        .build());
-                /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
-                 Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
-                 Example:
-                 Map<String, Object> currentDate = new HashMaps<>();
-                 currentDate.put("now", LocalDateTime.now()....);
-                 Claims could be : email, pictureLink, roles & groups , authentication time...
-                 */
                 var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
                 var refreshToken = jwtService.generateRefreshToken(toSave);
                 saveUserToken(toSave, jwtToken);
-
                 if(usedPlan.getSubscriptionType().equals(SubscriptionType.PAID)){
-                    LocalDate currentDate = LocalDate.now().plusDays(1);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    String formattedDate = currentDate.format(formatter);
-                    Subscription subscription = paymentController.createSubscription(new CreateSubscriptionRequest(usedPlan.getPaypalPlanId(), formattedDate, "https://app.telegdash.com","https://telegdash.com"));
-                    return new AccountRegisterResponse(email, toSave.getPlan().getPlanId(), subscription.getLinks().stream().filter(link -> link.getRel().equals("approve")).map(Link::getHref).findFirst().get(), jwtToken, refreshToken);
+                    Subscription subscription = createSubscription(account.email());
+                    toSave.setSubscriptionId(subscription.getId());
+                    accountRepository.save(toSave);
+                    return new AccountRegisterResponse(toSave.getUsername(), toSave.getPlan().getPlanId(), extractSubscriptionUrl(subscription), jwtToken, refreshToken);
                 }else{
+                    toSave.setSubscriptionId("null");
+                    accountRepository.save(toSave);
                     return new AccountRegisterResponse(email, toSave.getPlan().getPlanId(), "null", jwtToken, refreshToken);
                 }
             } else {
                 throw new RequestException("The plan is not Active for now", HttpStatus.CONFLICT);
             }
         } else {
-            throw new RequestException("The username provided already exist", HttpStatus.CONFLICT);
+            throw new RequestException("The email provided already exist", HttpStatus.CONFLICT);
         }
 
     }
+    private Account accountToRegister(AccountRegisterRequest account) throws Exception{
+        String email = InputChecker.normalizeEmail(account.email());
+        return accountRepository.save(Account.builder()
+                .email(email)
+                .role(Role.OWNER)
+                .password(passwordEncoder.encode(account.password()))
+                .plan(planService.getPlan(account.planId()))
+                .build());
+    }
+
+    public Subscription createSubscription(String username) throws Exception{
+        Plan usedPlan = planService.getPlan(accountRepository.findByEmail(username).get().getPlan().getPlanId());
+        LocalDate currentDate = LocalDate.now().plusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(formatter);
+        return paymentController.createSubscription(new CreateSubscriptionRequest(usedPlan.getPaypalPlanId(), formattedDate, "https://app.telegdash.com","https://telegdash.com"));
+
+    }
+
+    private String extractSubscriptionUrl(Subscription subscription){
+        return subscription.getLinks().stream().filter(link -> link.getRel().equals("approve")).map(Link::getHref).findFirst().get();
+    }
     public AccountAuthResponse authenticate(AccountAuthRequest account) {
-        String email = InputChecker.normalizeEmail(account.username());
-        Optional<Account> toAuthenticate = accountRepository.findByUsername(email);
+        String email = InputChecker.normalizeEmail(account.email());
+        Optional<Account> toAuthenticate = accountRepository.findByEmail(email);
         if (!toAuthenticate.isPresent()) {
             throw new RequestException("Account doesn't exist", HttpStatus.CONFLICT);
         } else if (!passwordEncoder.matches(account.password(), toAuthenticate.get().getPassword())) {
@@ -106,7 +116,7 @@ public class AccountService {
         var refreshToken = jwtService.generateRefreshToken(toAuthenticate.get());
         /** revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);
-        saveUserToken(Account.builder().username(email).password(account.password()).build(), jwtToken);
+        saveUserToken(Account.builder().email(email).password(account.password()).build(), jwtToken);
         return new AccountAuthResponse(email, jwtToken, refreshToken);
     }
 
@@ -136,7 +146,7 @@ public class AccountService {
         /** Extract user email from JWT token; because we set the email as username in the user Model */
         username = jwtService.extractUsername(refreshToken);
         if (username != null) {
-            var user = this.accountRepository.findByUsername(username).orElseThrow();
+            var user = this.accountRepository.findByEmail(username).orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
                 var newToken = jwtService.generateToken(new HashMap<>(), user);
                 jwtService.revokeAllUserTokens(user.getUsername());

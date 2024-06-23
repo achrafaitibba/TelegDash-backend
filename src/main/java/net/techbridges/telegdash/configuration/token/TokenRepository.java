@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public interface TokenRepository extends JpaRepository<Token, UUID> {
     @Query("""
-    select t from Token t inner join Account a on t.account.username = a.username
-    where a.username = :username and (t.expired = false or t.revoked = false)
+    select t from Token t inner join Account a on t.account.email = a.email
+    where a.email = :username and (t.expired = false or t.revoked = false)
 """)
     List<Token> findAllValidTokensByAccount(String username);
     Optional<Token> findByToken(String token);

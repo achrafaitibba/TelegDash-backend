@@ -1,7 +1,7 @@
 package net.techbridges.telegdash.dto.response;
 
 public record AccountRegisterResponse(
-        String username,
+        String email,
         Long planId,
         String subscriptionUrl,
         String token,

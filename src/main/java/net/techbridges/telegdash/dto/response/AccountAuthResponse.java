@@ -1,7 +1,7 @@
 package net.techbridges.telegdash.dto.response;
 
 public record AccountAuthResponse(
-        String username,
+        String email,
         String token,
         String refreshToken
 ) {
