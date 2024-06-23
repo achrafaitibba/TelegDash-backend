@@ -21,7 +21,7 @@ public class AccountController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<AccountRegisterResponse> register(@RequestBody AccountRegisterRequest account){
+    public ResponseEntity<AccountRegisterResponse> register(@RequestBody AccountRegisterRequest account) throws Exception{
         return ResponseEntity.ok().body(accountService.register(account));
     }
 

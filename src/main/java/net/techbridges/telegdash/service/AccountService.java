@@ -3,6 +3,7 @@ package net.techbridges.telegdash.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.configuration.token.Token;
@@ -14,10 +15,14 @@ import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
-import net.techbridges.telegdash.model.enums.AccountType;
+import net.techbridges.telegdash.model.Plan;
 import net.techbridges.telegdash.model.enums.Role;
+import net.techbridges.telegdash.model.enums.SubscriptionType;
+import net.techbridges.telegdash.paymentService.paypal.controller.PaymentController;
+import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionRequest;
+import net.techbridges.telegdash.paymentService.paypal.model.Link;
+import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import net.techbridges.telegdash.repository.AccountRepository;
-import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,23 +46,19 @@ public class AccountService {
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
     private final PlanService planService;
+    private final PaymentController paymentController;
 
-    public AccountRegisterResponse register(AccountRegisterRequest account) {
+    @Transactional
+    public AccountRegisterResponse register(AccountRegisterRequest account) throws Exception{
         String email = InputChecker.normalizeEmail(account.username());
         if (accountRepository.findByUsername(email).isEmpty()) {
-            if (planService.getPlan(account.planId()).getIsActive()) {
-                LocalDate currentDate = LocalDate.now();
-                LocalDate freeTrialEndDate = currentDate.plusDays(7);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-                String formattedDate = freeTrialEndDate.format(formatter);
+            Plan usedPlan = planService.getPlan(account.planId());
+            if (usedPlan.getIsActive()) {
                 Account toSave = accountRepository.save(Account.builder()
                         .username(email)
                         .role(Role.OWNER)
                         .password(passwordEncoder.encode(account.password()))
                         .plan(planService.getPlan(account.planId()))
-                        .trialPlan(planService.findTrialPlan())
-                        .accountType(AccountType.TRIAL)
-                        .freeTrialEndDate(formattedDate)
                         .build());
                 /** Instead of initiating an empty hashmap you can create a list of claims and add them to the hashmap
                  Such as birthdate, account status... and any other data needed to be sent to the client whiting the token
@@ -69,7 +70,16 @@ public class AccountService {
                 var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
                 var refreshToken = jwtService.generateRefreshToken(toSave);
                 saveUserToken(toSave, jwtToken);
-                return new AccountRegisterResponse(email, formattedDate, toSave.getPlan().getPlanId(), toSave.getAccountType().toString(), jwtToken, refreshToken);
+
+                if(usedPlan.getSubscriptionType().equals(SubscriptionType.PAID)){
+                    LocalDate currentDate = LocalDate.now().plusDays(1);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String formattedDate = currentDate.format(formatter);
+                    Subscription subscription = paymentController.createSubscription(new CreateSubscriptionRequest(usedPlan.getPaypalPlanId(), formattedDate, "https://app.telegdash.com","https://telegdash.com"));
+                    return new AccountRegisterResponse(email, toSave.getPlan().getPlanId(), subscription.getLinks().stream().filter(link -> link.getRel().equals("approve")).map(Link::getHref).findFirst().get(), jwtToken, refreshToken);
+                }else{
+                    return new AccountRegisterResponse(email, toSave.getPlan().getPlanId(), "null", jwtToken, refreshToken);
+                }
             } else {
                 throw new RequestException("The plan is not Active for now", HttpStatus.CONFLICT);
             }

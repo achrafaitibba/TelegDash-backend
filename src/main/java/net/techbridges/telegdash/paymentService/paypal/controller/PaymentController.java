@@ -5,14 +5,23 @@ import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionReq
 import net.techbridges.telegdash.paymentService.paypal.dto.ReviseSubscriptionRequest;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import net.techbridges.telegdash.paymentService.paypal.service.SubscriptionService;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
+@Service
+@RestController
+@RequestMapping("/paypal")
 public class PaymentController {
 
     private final SubscriptionService subscriptionService;
 
 
-    public Subscription createSubscription(CreateSubscriptionRequest request) throws Exception {
+    @PostMapping
+    public Subscription createSubscription(@RequestBody CreateSubscriptionRequest request) throws Exception {
         return subscriptionService.createSubscription(request);
     }
 

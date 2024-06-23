@@ -1,17 +1,24 @@
 package net.techbridges.telegdash.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import net.techbridges.telegdash.model.enums.PlanType;
+import lombok.NoArgsConstructor;
 import net.techbridges.telegdash.model.enums.ReminderFrequency;
+import net.techbridges.telegdash.model.enums.SubscriptionType;
 
-@Entity
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
 public class Plan {
     @Id
     @GeneratedValue
     private Long planId;
-    private PlanType planType;
+    @Enumerated(EnumType.STRING)
+    private SubscriptionType subscriptionType;
     private String paypalPlanId;
     private String planName;
     private String description;
@@ -19,6 +26,7 @@ public class Plan {
     private Long members;
     private Boolean reminder;
     private Integer reminders;
+    @Enumerated(EnumType.STRING)
     private ReminderFrequency reminderFrequency;
     private Integer customColumns;
     private Boolean kickingMember;

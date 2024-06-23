@@ -9,6 +9,7 @@ import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
 import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Service
 public class SubscriptionService {
     private final PaypalAuthenticationService authenticationService;
     private final HttpHeaders httpHeaders;

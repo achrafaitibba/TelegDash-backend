@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.techbridges.telegdash.configuration.token.Token;
-import net.techbridges.telegdash.model.enums.AccountType;
+import net.techbridges.telegdash.model.enums.SubscriptionType;
 import net.techbridges.telegdash.model.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,15 +25,12 @@ public class Account implements UserDetails {
     @Id
     private String username;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
     @OneToOne
     private Plan plan;
-    @OneToOne
-    private Plan trialPlan;
-    private AccountType accountType;
     @OneToMany
     private List<Payment> payments;
-    private String freeTrialEndDate;
     @OneToMany(mappedBy = "account")
     private List<Token> tokens;
     @Override
