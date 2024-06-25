@@ -92,7 +92,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) {
+    public final Claims extractAllClaims(final String token) {
         return
                 Jwts
                         .parserBuilder()

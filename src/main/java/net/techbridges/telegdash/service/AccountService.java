@@ -1,6 +1,7 @@
 package net.techbridges.telegdash.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -55,15 +57,21 @@ public class AccountService {
             Plan usedPlan = planService.getPlan(account.planId());
             Account toSave = accountToRegister(account);
             if (usedPlan.getIsActive()) {
-                var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
-                var refreshToken = jwtService.generateRefreshToken(toSave);
-                saveUserToken(toSave, jwtToken);
+
                 if(usedPlan.getSubscriptionType().equals(SubscriptionType.PAID)){
                     Subscription subscription = createSubscription(account.email());
+                    Map<String, Object> claims = new HashMap<>();
+                    claims.put("subscriptionId", subscription.getId());
+                    var jwtToken = jwtService.generateToken(claims, toSave);
+                    var refreshToken = jwtService.generateRefreshToken(toSave);
+                    saveUserToken(toSave, jwtToken);
                     toSave.setSubscriptionId(subscription.getId());
                     accountRepository.save(toSave);
                     return new AccountRegisterResponse(toSave.getUsername(), toSave.getPlan().getPlanId(), extractSubscriptionUrl(subscription), jwtToken, refreshToken);
                 }else{
+                    var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
+                    var refreshToken = jwtService.generateRefreshToken(toSave);
+                    saveUserToken(toSave, jwtToken);
                     toSave.setSubscriptionId("null");
                     accountRepository.save(toSave);
                     return new AccountRegisterResponse(email, toSave.getPlan().getPlanId(), "null", jwtToken, refreshToken);
@@ -121,9 +129,8 @@ public class AccountService {
     }
 
 
-    public String subscriptionStatus(String subsId) throws Exception{
-        return paymentController.getSubscriptionDetails(subsId).getStatus().toString();
-    }
+
+
 
     private void saveUserToken(Account account, String jwtToken) {
         var token = Token.builder()
