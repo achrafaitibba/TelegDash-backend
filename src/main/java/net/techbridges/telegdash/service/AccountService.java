@@ -121,6 +121,10 @@ public class AccountService {
     }
 
 
+    public String subscriptionStatus(String subsId) throws Exception{
+        return paymentController.getSubscriptionDetails(subsId).getStatus().toString();
+    }
+
     private void saveUserToken(Account account, String jwtToken) {
         var token = Token.builder()
                 .account(account)

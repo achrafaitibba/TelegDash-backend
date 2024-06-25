@@ -10,6 +10,7 @@ import net.techbridges.telegdash.model.enums.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,6 +27,11 @@ public class Account implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    private LocalDateTime createdAt;
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
     @OneToOne
     private Plan plan;
     private String subscriptionId;
