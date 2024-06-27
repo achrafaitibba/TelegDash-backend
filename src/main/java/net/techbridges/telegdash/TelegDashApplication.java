@@ -21,4 +21,7 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, use jackson to map data coming from telegdash.py api
     //todo, check channels infos before downgrading plans
 
+    //todo, lifetime subs for clients, not visitors
+    //todo, free accounts like doc, should have a limited access (eg. six months)
+    //todo, save emails from subscription details after being subscribed
 }

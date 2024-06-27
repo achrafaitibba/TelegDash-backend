@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>net.techbridges</groupId>
-    <artifactId>TelegDash</artifactId>
+    <artifactId>TelegDash-app</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>TelegDash</name>
     <description>TelegDash</description>

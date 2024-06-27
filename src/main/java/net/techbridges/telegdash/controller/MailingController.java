@@ -3,7 +3,7 @@ package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.model.EmailDetails;
-import net.techbridges.telegdash.service.EmailServiceImpl;
+import net.techbridges.telegdash.service.EmailService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ import org.thymeleaf.context.Context;
 @RequestMapping("/api/v1.0/emails")
 public class MailingController {
 
-    private EmailServiceImpl emailService;
+    private EmailService emailService;
 
 
     @PostMapping("/send-html-email")
