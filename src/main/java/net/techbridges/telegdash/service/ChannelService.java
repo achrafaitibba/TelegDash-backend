@@ -1,7 +1,7 @@
 package net.techbridges.telegdash.service;
 
 import lombok.AllArgsConstructor;
-import net.techbridges.telegdash.annotation.SubscriptionValidator;
+import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.paymentService.paypal.controller.PaymentController;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
@@ -14,7 +14,7 @@ public class ChannelService {
     private final TelegDashPyApiController telegDashPyApiController;
     private final PaymentController paymentController;
 
-    @SubscriptionValidator
+    @SubscriptionChecker
     public Integer checkAdminStatus(String channelId){
         try{
             return telegDashPyApiController.checkAdminStatus(channelId);

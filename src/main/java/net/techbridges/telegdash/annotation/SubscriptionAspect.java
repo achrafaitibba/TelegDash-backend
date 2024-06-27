@@ -25,17 +25,26 @@ public class SubscriptionAspect {
     private final JwtService jwtService;
 
 
-    @Before("@annotation(net.techbridges.telegdash.annotation.SubscriptionValidator)")
+    @Before("@annotation(net.techbridges.telegdash.annotation.SubscriptionChecker)")
     public void checkSubscription(JoinPoint joinPoint) throws Exception{
         System.out.println("Before calling method: " + joinPoint.getSignature().getName());
         String token = headers.getHeader("Authorization").substring(7);
         String subscriptionId = jwtService.extractAllClaims(token).get("subscriptionId").toString();
 
-        if (!isSubscriptionActive(subscriptionId)) {
-            throw new RequestException("Subscription is not active", HttpStatus.UNAUTHORIZED);
-        }else {
+        if(!subscriptionId.equals("null")){
+            if(!isSubscriptionActive(subscriptionId)){
+                throw new RequestException("Subscription is not active", HttpStatus.UNAUTHORIZED);
+            }
+        }else{
             System.out.println("Subscription is active, ID: " + subscriptionId);
+
         }
+//        if(!subscriptionStatus(subscriptionId).equals("null") || !isSubscriptionActive(subscriptionId)){
+//            throw new RequestException("Subscription is not active", HttpStatus.UNAUTHORIZED);
+//        }else {
+//            System.out.println("Subscription is active, ID: " + subscriptionId);
+//        }
+
     }
 
     private String subscriptionStatus(String subsId) throws Exception{

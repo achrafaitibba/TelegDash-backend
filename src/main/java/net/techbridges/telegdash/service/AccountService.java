@@ -69,7 +69,9 @@ public class AccountService {
                     accountRepository.save(toSave);
                     return new AccountRegisterResponse(toSave.getUsername(), toSave.getPlan().getPlanId(), extractSubscriptionUrl(subscription), jwtToken, refreshToken);
                 }else{
-                    var jwtToken = jwtService.generateToken(new HashMap<>(), toSave);
+                    Map<String, Object> claims = new HashMap<>();
+                    claims.put("subscriptionId", "null");
+                    var jwtToken = jwtService.generateToken(claims, toSave);
                     var refreshToken = jwtService.generateRefreshToken(toSave);
                     saveUserToken(toSave, jwtToken);
                     toSave.setSubscriptionId("null");
