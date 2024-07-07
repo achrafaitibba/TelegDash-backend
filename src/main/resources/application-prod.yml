@@ -1,0 +1,55 @@
+spring:
+  mail:
+    host:
+    port:
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+    custom-name:
+  datasource:
+    url:
+    username:
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQLDialect
+  main:
+    allow-bean-definition-overriding: true
+logging:
+  level:
+    org:
+      springframework:
+        security:
+          OFF
+api:
+  telegdash:
+  auth:
+    username:
+    password:
+app:
+  security:
+    jwt:
+      secret-key: c0182a0c93fdf659eb425445c099af10c66ce08fca923360bf67139abb1fb5a3
+      expiration: 86400000 # 1 day
+      refresh-token:
+        expiration: 604800000 # 7 days
+payment:
+  paypal:
+    client-id:
+    secret:
+    api:
+      base-url:
+
+#server:
+#  servlet:
+#    context-path: "/api/v1.0"
