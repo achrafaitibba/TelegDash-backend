@@ -1,7 +1,7 @@
 package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
-import net.techbridges.telegdash.model.Channel;
+import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
 import net.techbridges.telegdash.service.ChannelService;
 import org.springframework.http.ResponseEntity;
@@ -23,4 +23,8 @@ public class ChannelController {
         return ResponseEntity.ok().body(Niche.values());
     }
 
+    @GetMapping("/group-types")
+    public ResponseEntity<GroupType[]> listGroupTypes() {
+        return ResponseEntity.ok().body(GroupType.values());
+    }
 }
