@@ -1,12 +1,11 @@
 package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
+import net.techbridges.telegdash.model.Channel;
+import net.techbridges.telegdash.model.enums.Niche;
 import net.techbridges.telegdash.service.ChannelService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1.0/channels")
@@ -18,4 +17,10 @@ public class ChannelController {
     public ResponseEntity<Integer> checkAdminStatus(@PathVariable String channelId) {
         return ResponseEntity.ok().body(channelService.checkAdminStatus(channelId));
     }
+
+    @GetMapping("/niches")
+    public ResponseEntity<Niche[]> listChannels() {
+        return ResponseEntity.ok().body(Niche.values());
+    }
+
 }
