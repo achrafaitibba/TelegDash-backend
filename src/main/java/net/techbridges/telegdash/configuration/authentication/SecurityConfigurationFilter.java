@@ -41,7 +41,19 @@ public class SecurityConfigurationFilter {
                         "/api/v1.0/plans/**",
                         "/api/v1.0/channels/status/**",
                         "/paypal",
-                        "/api/v1.0/account/test"
+                        "/api/v1.0/account/test",
+                        "swagger-ui/index.html",
+                        "/swagger-ui/index.html#",
+                        "/v2/api-docs",
+                        "/v3/api-docs",
+                        "/v3/api-docs/**",
+                        "/swagger-resources",
+                        "/swagger-resources/**",
+                        "/configuration/ui",
+                        "/configuration/security",
+                        "/swagger-ui/**",
+                        "/webjars/**",
+                        "/swagger-ui.html"
                 )
                 .permitAll()
                 //////////////////////
