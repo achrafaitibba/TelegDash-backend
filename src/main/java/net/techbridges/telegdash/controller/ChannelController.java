@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class ChannelController {
     private final ChannelService channelService;
 
-    @GetMapping("/status/{channelId}")
-    public ResponseEntity<Integer> checkAdminStatus(@PathVariable String channelId) {
-        return ResponseEntity.ok().body(channelService.checkAdminStatus(channelId));
+    @GetMapping("/status/{groupType}/{channelId}")
+    public ResponseEntity<Integer> checkAdminStatus(@PathVariable GroupType groupType, @PathVariable String channelId) {
+        return ResponseEntity.ok().body(channelService.checkAdminStatus(groupType, channelId));
     }
 
     @GetMapping("/niches")
@@ -27,4 +27,8 @@ public class ChannelController {
     public ResponseEntity<GroupType[]> listGroupTypes() {
         return ResponseEntity.ok().body(GroupType.values());
     }
+
+
+
+
 }

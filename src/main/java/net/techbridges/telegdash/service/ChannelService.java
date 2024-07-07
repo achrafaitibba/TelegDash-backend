@@ -3,8 +3,10 @@ package net.techbridges.telegdash.service;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.exception.RequestException;
+import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.paymentService.paypal.controller.PaymentController;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
+import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,9 @@ public class ChannelService {
     private final PaymentController paymentController;
 
     @SubscriptionChecker
-    public Integer checkAdminStatus(String channelId){
+    public Integer checkAdminStatus(GroupType groupType, String channelId){
         try{
-            return telegDashPyApiController.checkAdminStatus(channelId);
+            return telegDashPyApiController.checkAdminStatus(InputChecker.channelUsernameBuilder(groupType, channelId));
         }catch (Exception e){
             throw new RequestException("Something is wrong with the provided ID, details : "  + e.getMessage(), HttpStatus.CONFLICT);
         }
