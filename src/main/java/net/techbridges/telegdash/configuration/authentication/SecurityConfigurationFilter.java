@@ -40,7 +40,8 @@ public class SecurityConfigurationFilter {
                         "/api/v1.0/account/authenticate",
                         "/api/v1.0/plans/**",
                         "/api/v1.0/channels/status/**",
-                        "/paypal"
+                        "/paypal",
+                        "/api/v1.0/account/test"
                 )
                 .permitAll()
                 //////////////////////
