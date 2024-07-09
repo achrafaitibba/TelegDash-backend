@@ -20,8 +20,10 @@ public class Channel {
     @Id
     private String channelId;
     private String name;
+    @Enumerated(EnumType.STRING)
     private GroupType groupType;
-    @OneToMany
+    @Enumerated(EnumType.STRING)
+    @Column(length = 2000)
     private List<Niche> niches;
     private String description;
     private Long membersCount;

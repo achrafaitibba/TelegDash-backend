@@ -1,12 +1,6 @@
 package net.techbridges.telegdash.model.enums;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.Getter;
 
-
-@Getter
-@Entity
 public enum Niche {
     BUSINESS,
     COOKING,
@@ -29,8 +23,4 @@ public enum Niche {
     TECHNOLOGY,
     TRADING,
     UNDEFINED;
-
-    @Id
-    private Long id;
-
 }

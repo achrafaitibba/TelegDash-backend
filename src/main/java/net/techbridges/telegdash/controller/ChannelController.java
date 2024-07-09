@@ -1,6 +1,8 @@
 package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
+import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
+import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
 import net.techbridges.telegdash.service.ChannelService;
@@ -28,7 +30,10 @@ public class ChannelController {
         return ResponseEntity.ok().body(GroupType.values());
     }
 
-
+    @PostMapping()
+    public ResponseEntity<ChannelResponse> createChannel(@RequestBody ChannelCreateRequest channel) {
+        return ResponseEntity.ok().body(channelService.createChannel(channel));
+    }
 
 
 }
