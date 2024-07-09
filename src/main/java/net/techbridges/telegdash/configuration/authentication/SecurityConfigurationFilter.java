@@ -35,13 +35,13 @@ public class SecurityConfigurationFilter {
                 /** authorized endpoints: doesn't require authentication */
                 .authorizeHttpRequests()
                 .requestMatchers(
-                        "/api/v1.0/account/register",
-                        "/api/v1.0/account/refresh-token",
-                        "/api/v1.0/account/authenticate",
+                        "/api/v1.0/accounts/register",
+                        "/api/v1.0/accounts/refresh-token",
+                        "/api/v1.0/accounts/authenticate",
                         "/api/v1.0/plans/**",
                         "/api/v1.0/channels/status/**",
                         "/paypal",
-                        "/api/v1.0/account/test",
+                        "/api/v1.0/accounts/test",
                         "swagger-ui/index.html",
                         "/swagger-ui/index.html#",
                         "/v2/api-docs",
