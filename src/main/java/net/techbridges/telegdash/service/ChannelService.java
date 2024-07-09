@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.dto.request.AddColumnChannel;
-import net.techbridges.telegdash.dto.request.AttributeRequest;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
@@ -14,11 +13,9 @@ import net.techbridges.telegdash.model.Channel;
 import net.techbridges.telegdash.model.Plan;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
-import net.techbridges.telegdash.model.enums.ValueType;
 import net.techbridges.telegdash.repository.AccountRepository;
 import net.techbridges.telegdash.repository.AttributeRepository;
 import net.techbridges.telegdash.repository.ChannelRepository;
-import net.techbridges.telegdash.repository.MemberRepository;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
@@ -127,8 +124,6 @@ public class ChannelService {
     private boolean isColumnCreditAvailable(Account account, String channelId){
         int chosenPlanAttributes = account.getPlan().getCustomColumns();
         int channelAttributesCount = channelRepository.findById(channelId).get().getAttributes().size() + 1;
-        System.out.println("we here :" + channelAttributesCount);
-        System.out.println("we here :" + chosenPlanAttributes);
         if(chosenPlanAttributes < channelAttributesCount){
             throw new RequestException("You have reached the limit of custom columns, upgrade your plan", HttpStatus.FORBIDDEN);
         }
