@@ -3,15 +3,20 @@ package net.techbridges.telegdash.service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
+import net.techbridges.telegdash.dto.request.AddColumnChannel;
+import net.techbridges.telegdash.dto.request.AttributeRequest;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
+import net.techbridges.telegdash.model.Attribute;
 import net.techbridges.telegdash.model.Channel;
 import net.techbridges.telegdash.model.Plan;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
+import net.techbridges.telegdash.model.enums.ValueType;
 import net.techbridges.telegdash.repository.AccountRepository;
+import net.techbridges.telegdash.repository.AttributeRepository;
 import net.techbridges.telegdash.repository.ChannelRepository;
 import net.techbridges.telegdash.repository.MemberRepository;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
@@ -28,7 +33,7 @@ public class ChannelService {
     private final TelegDashPyApiController telegDashPyApiController;
     private final ChannelRepository channelRepository;
     private final AccountRepository accountRepository;
-    private final MemberRepository memberRepository;
+    private final AttributeRepository attributeRepository;
 
     @SubscriptionChecker
     public Integer checkAdminStatus(GroupType groupType, String channelId){
@@ -46,7 +51,7 @@ public class ChannelService {
         long newChannelMembersCount = getMembersCountByChannel(channelID);
         Optional<Account> channelOwner = accountRepository.findByEmail(channel.channelOwnerMail());
         Channel savedChannel = new Channel();
-        if(isPlanCreditAvailable(channelOwner.get(), newChannelMembersCount)){
+        if(isChannelMemberCreditAvailable(channelOwner.get(), newChannelMembersCount)){
             savedChannel = channelRepository.save(
                     Channel.builder()
                             .channelId(channelID)
@@ -79,11 +84,8 @@ public class ChannelService {
         return telegDashPyApiController.getMembersCount(channelId);
     }
 
-    /**
-     * - created channels count
-     * - all member's channels count
-     */
-    private boolean isPlanCreditAvailable(Account account, long newChannelMembersCount){
+
+    private boolean isChannelMemberCreditAvailable(Account account, long newChannelMembersCount){
         Plan chosenPlan = account.getPlan();
         long channelsCount = getChannelCountByAccount(account.getUsername()) + 1;
         if(channelsCount > chosenPlan.getChannels()){
@@ -96,6 +98,39 @@ public class ChannelService {
         }
         if(membersCountOfChannels > chosenPlan.getMembers()){
             throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.FORBIDDEN);
+        }
+        return true;
+    }
+
+
+    @SubscriptionChecker
+    @Transactional
+    public ChannelResponse addColumn(AddColumnChannel request) {
+        Channel toUpdate = channelRepository.findById(request.channelId()).get();
+        if(isColumnCreditAvailable(accountRepository.findByEmail(request.channelOwnerMail()).get(),request.channelId())){
+            Attribute newAttribute = attributeRepository.save( Attribute
+                    .builder()
+                    .name(request.attribute().name())
+                    .valueType(request.attribute().valueType())
+                    .build());
+            toUpdate.getAttributes().add(newAttribute);
+            channelRepository.save(toUpdate);
+        }
+        return new ChannelResponse(
+                toUpdate.getName(),
+                toUpdate.getNiches(),
+                toUpdate.getDescription(),
+                toUpdate.getMembersCount()
+        );
+    }
+
+    private boolean isColumnCreditAvailable(Account account, String channelId){
+        int chosenPlanAttributes = account.getPlan().getCustomColumns();
+        int channelAttributesCount = channelRepository.findById(channelId).get().getAttributes().size() + 1;
+        System.out.println("we here :" + channelAttributesCount);
+        System.out.println("we here :" + chosenPlanAttributes);
+        if(chosenPlanAttributes < channelAttributesCount){
+            throw new RequestException("You have reached the limit of custom columns, upgrade your plan", HttpStatus.FORBIDDEN);
         }
         return true;
     }
