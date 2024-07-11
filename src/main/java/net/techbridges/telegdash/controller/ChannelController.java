@@ -2,7 +2,6 @@ package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.dto.request.AddColumnChannel;
-import net.techbridges.telegdash.dto.request.AttributeRequest;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.model.enums.GroupType;
@@ -23,7 +22,7 @@ public class ChannelController {
     }
 
     @GetMapping("/niches")
-    public ResponseEntity<Niche[]> listChannels() {
+    public ResponseEntity<Niche[]> listNiches() {
         return ResponseEntity.ok().body(Niche.values());
     }
 

@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class TelegramMemberService {
     @Value("${api.telegdash}")
     private String BASEURL;
     private final AuthenticationService auth;
@@ -56,10 +56,10 @@ public class MemberService {
             List<HashMap<String, Object>> responseData = responseEntity.getBody();
             List<BasicMember> members = new ArrayList<>();
             responseData.forEach(memberData -> {
-                String telegramId = memberData.get("member_id") != null ? memberData.get("member_id").toString() : "No Data";
-                String username = memberData.get("username") != null ? memberData.get("username").toString() : "No Data";
-                String firstName = memberData.get("firstName") != null ? memberData.get("firstName").toString() : "No Data";
-                String lastName = memberData.get("lastName") != null ? memberData.get("lastName").toString() : "No Data";
+                String telegramId = memberData.get("member_id") != null ? memberData.get("member_id").toString() : "";
+                String username = memberData.get("username") != null ? memberData.get("username").toString() : "";
+                String firstName = memberData.get("firstName") != null ? memberData.get("firstName").toString() : "";
+                String lastName = memberData.get("lastName") != null ? memberData.get("lastName").toString() : "";
                 members.add(new BasicMember(telegramId, username, firstName, lastName));
             });
             return members;

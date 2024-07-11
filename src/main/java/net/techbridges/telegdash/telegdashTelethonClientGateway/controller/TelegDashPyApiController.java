@@ -4,7 +4,7 @@ package net.techbridges.telegdash.telegdashTelethonClientGateway.controller;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.model.BasicMember;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.AdminService;
-import net.techbridges.telegdash.telegdashTelethonClientGateway.service.MemberService;
+import net.techbridges.telegdash.telegdashTelethonClientGateway.service.TelegramMemberService;
 import org.springframework.stereotype.Service;
 
 import org.springframework.web.client.RestTemplate;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TelegDashPyApiController {
 
-    private final MemberService memberService;
+    private final TelegramMemberService memberService;
     private final AdminService adminService;
     private final RestTemplate restTemplate;
 
