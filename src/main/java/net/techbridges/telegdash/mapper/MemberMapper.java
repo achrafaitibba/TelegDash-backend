@@ -25,7 +25,7 @@ public class MemberMapper {
                 member.getTelegramMember().getFirstName(),
                 member.getTelegramMember().getLastName(),
                 member.getMemberStatus().toString(),
-                member.getBillingFrequency().toString(),
+                member.getBillingFrequency() == null ? "" : member.getBillingFrequency().toString(),
                 member.getBillingPeriod(),
                 member.getStartDate(),
                 member.getEndDate()

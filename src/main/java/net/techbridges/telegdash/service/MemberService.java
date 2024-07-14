@@ -55,30 +55,9 @@ public class MemberService {
         List<Object> memberResponses = new ArrayList<>();
         for (Member member : memberRepository.findAllByChannelChannelId(channelId)) {
             MemberResponse memberResponse =
-                    new MemberResponse(
-                            member.getMemberId(),
-                            member.getChannel().getChannelId(),
-                            member.getTelegramMember().getTelegramMemberId(),
-                            member.getTelegramMember().getUsername(),
-                            member.getTelegramMember().getFirstName(),
-                            member.getTelegramMember().getLastName(),
-                            member.getMemberStatus() == null ? "" : member.getMemberStatus().toString(),
-                            member.getBillingFrequency() == null ? "" : member.getBillingFrequency().toString(),
-                            member.getBillingPeriod(),
-                            member.getStartDate(),
-                            member.getEndDate());
-
-            if (isColumnCreditAvailable()){
-                List<Value> values = valueRepository.findAllByMemberMemberId(member.getMemberId());
-                memberResponses.add(new CustomColumnMemberResponse(
-                        memberResponse,
-                        values.stream().map(
-                                value -> new ValueResponse(
-                                        value.getId(),
-                                        value.getValue(),
-                                        value.getAttribute().getName(),
-                                        value.getAttribute().getId())).toList()
-                ));
+                    memberMapper.toResponse(member);
+            if (isColumnCreditAvailable()) {
+                memberResponses.add(memberMapper.toCustomColumnMemberResponse(member));
 
             } else {
                 memberResponses.add(memberResponse);
@@ -91,18 +70,9 @@ public class MemberService {
         List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
         Channel channel = channelRepository.findById(channelId).get();
         for (TelegramMember telegramMember : telegramMembers) {
-            if (memberRepository.findByTelegramMemberTelegramMemberId(telegramMember.getTelegramMemberId()).isEmpty()) {
-                if(telegramMemberRepository.findById(telegramMember.getTelegramMemberId()).isEmpty()){
-                    telegramMemberRepository.save(telegramMember);
-                }
-                memberRepository.save(
-                        Member.builder()
-                                .channel(channel)
-                                .telegramMember(telegramMember)
-                                .memberStatus(MemberStatus.ACTIVE)
-                                .build()
-                );
-            }else{
+            Optional<Member> currentMember = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(telegramMember.getTelegramMemberId(), channelId);
+            if (currentMember.isEmpty()) {
+                telegramMemberRepository.save(telegramMember);
                 memberRepository.save(
                         Member.builder()
                                 .channel(channel)
@@ -127,27 +97,26 @@ public class MemberService {
     }
 
 
-
     @SubscriptionChecker
     public Object updateMember(MemberUpdateRequest member) {
         Optional<Member> toUpdate = memberRepository.findById(member.memberId());
-        if(toUpdate.isEmpty()){
+        if (toUpdate.isEmpty()) {
             throw new RequestException("Member doesn't exist", HttpStatus.NOT_FOUND);
         }
         toUpdate.get().setBillingFrequency(BillingFrequency.valueOf(member.billingFrequency()));
         toUpdate.get().setBillingPeriod(member.billingPeriod());
         toUpdate.get().setStartDate(member.startDate());
         toUpdate.get().setEndDate(member.endDate());
-        if(isColumnCreditAvailable()){
+        if (isColumnCreditAvailable()) {
             List<Value> values = valueRepository.findAllByMemberMemberId(member.memberId());
-            if(!values.isEmpty()){
+            if (!values.isEmpty()) {
                 List<ValueUpdateRequest> valueUpdateRequests = member.values();
                 for (ValueUpdateRequest value : valueUpdateRequests) {
                     Optional<Value> valueToUpdate = valueRepository.findById(value.valueId());
-                    if(valueToUpdate.isPresent()){
+                    if (valueToUpdate.isPresent()) {
                         valueToUpdate.get().setValue(value.value());
                         valueRepository.save(valueToUpdate.get());
-                    }else {
+                    } else {
                         Value toSave = new Value();
                         toSave.setValue(value.value());
                         toSave.setMember(toUpdate.get());
@@ -156,9 +125,9 @@ public class MemberService {
 
                     }
                 }
-            }else{
+            } else {
                 List<ValueUpdateRequest> valueUpdateRequests = member.values();
-                for (ValueUpdateRequest value : valueUpdateRequests ) {
+                for (ValueUpdateRequest value : valueUpdateRequests) {
                     Value newValue = new Value();
                     newValue.setValue(value.value());
                     newValue.setMember(toUpdate.get());
@@ -169,9 +138,9 @@ public class MemberService {
         }
         memberRepository.save(toUpdate.get());
         List<Value> values = valueRepository.findAllByMemberMemberId(member.memberId());
-        if(!values.isEmpty()){
+        if (!values.isEmpty()) {
             return memberMapper.toCustomColumnMemberResponse(toUpdate.get());
-        }else {
+        } else {
             return memberMapper.toResponse(toUpdate.get());
         }
     }
@@ -180,5 +149,22 @@ public class MemberService {
         String token = headers.getHeader("Authorization").substring(7);
         String accountOwner = jwtService.extractUsername(token);
         return planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get().getCustomColumns() > 0;
+    }
+
+    @SubscriptionChecker
+    public List<MemberResponse> kickMembers(String channelId, List<String> memberIds) {
+        if(memberIds.isEmpty()){
+            throw new RequestException("The list of members is empty", HttpStatus.NOT_FOUND);
+        }
+        telegDashPyApiController.kickMembers(channelId, memberIds);
+        for (String id : memberIds) {
+            Optional<Member> toKick = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(id, channelId);
+            toKick.get().setMemberStatus(MemberStatus.KICKED);
+            memberRepository.save(toKick.get());
+        }
+        List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
+        return members.stream().map(
+                memberMapper::toResponse
+        ).toList();
     }
 }

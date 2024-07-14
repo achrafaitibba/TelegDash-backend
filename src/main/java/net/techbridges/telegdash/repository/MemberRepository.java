@@ -9,5 +9,6 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
     List<Member> findAllByChannelChannelId(String channelId);
+    Optional<Member> findByTelegramMemberTelegramMemberIdAndChannelChannelId(String telegramMemberId, String channelId);
     Optional<Member> findByTelegramMemberTelegramMemberId(String telegramMemberId);
 }
