@@ -84,7 +84,7 @@ public class ChannelService {
 
     private boolean isChannelMemberCreditAvailable(Account account, long newChannelMembersCount){
         Plan chosenPlan = account.getPlan();
-        long channelsCount = getChannelCountByAccount(account.getUsername()) + 1;
+        long channelsCount = getChannelCountByAccount(account.getUsername());
         if(channelsCount > chosenPlan.getChannels()){
            throw new RequestException("You have reached the limit of channels, upgrade your plan", HttpStatus.FORBIDDEN);
         }
@@ -109,8 +109,10 @@ public class ChannelService {
                     .builder()
                     .name(request.attribute().name())
                     .valueType(request.attribute().valueType())
+                    .channel(toUpdate)
                     .build());
-            toUpdate.getAttributes().add(newAttribute);
+            newAttribute.setChannel(toUpdate);
+            attributeRepository.save(newAttribute);
             channelRepository.save(toUpdate);
         }
         return new ChannelResponse(
@@ -123,7 +125,7 @@ public class ChannelService {
 
     private boolean isColumnCreditAvailable(Account account, String channelId){
         int chosenPlanAttributes = account.getPlan().getCustomColumns();
-        int channelAttributesCount = channelRepository.findById(channelId).get().getAttributes().size() + 1;
+        int channelAttributesCount = attributeRepository.findAllByChannelChannelId(channelId).size() + 1;
         if(chosenPlanAttributes < channelAttributesCount){
             throw new RequestException("You have reached the limit of custom columns, upgrade your plan", HttpStatus.FORBIDDEN);
         }

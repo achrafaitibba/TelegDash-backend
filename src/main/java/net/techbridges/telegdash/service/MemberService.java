@@ -1,12 +1,18 @@
 package net.techbridges.telegdash.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
+import net.techbridges.telegdash.configuration.token.JwtService;
+import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
+import net.techbridges.telegdash.dto.request.ValueUpdateRequest;
 import net.techbridges.telegdash.dto.response.CustomColumnMemberResponse;
 import net.techbridges.telegdash.dto.response.MemberResponse;
 import net.techbridges.telegdash.dto.response.ValueResponse;
 import net.techbridges.telegdash.exception.RequestException;
+import net.techbridges.telegdash.mapper.MemberMapper;
 import net.techbridges.telegdash.model.*;
+import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
@@ -15,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -24,7 +31,12 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ValueRepository valueRepository;
     private final ChannelRepository channelRepository;
-
+    private final PlanRepository planRepository;
+    private final HttpServletRequest headers;
+    private final JwtService jwtService;
+    private final AccountRepository accountRepository;
+    private final AttributeRepository attributeRepository;
+    private final MemberMapper memberMapper;
 
     @SubscriptionChecker
     public List<Object> getAllMembers(String channelId, Boolean sync) {
@@ -56,7 +68,7 @@ public class MemberService {
                             member.getStartDate(),
                             member.getEndDate());
 
-            if (isColumnCreditAvailable(channelId)) {
+            if (isColumnCreditAvailable()){
                 List<Value> values = valueRepository.findAllByMemberMemberId(member.getMemberId());
                 memberResponses.add(new CustomColumnMemberResponse(
                         memberResponse,
@@ -105,7 +117,59 @@ public class MemberService {
         ).toList();
     }
 
-    private boolean isColumnCreditAvailable(String channelId) {
-        return (channelRepository.findById(channelId).get().getAttributes().size() + 1) > 0;
+
+
+    @SubscriptionChecker
+    public Object updateMember(MemberUpdateRequest member) {
+                Optional<Member> toUpdate = memberRepository.findById(member.memberId());
+        if(toUpdate.isEmpty()){
+            throw new RequestException("Member doesn't exist", HttpStatus.NOT_FOUND);
+        }
+        toUpdate.get().setBillingFrequency(BillingFrequency.valueOf(member.billingFrequency()));
+        toUpdate.get().setBillingPeriod(member.billingPeriod());
+        toUpdate.get().setStartDate(member.startDate());
+        toUpdate.get().setEndDate(member.endDate());
+        if(isColumnCreditAvailable()){
+            List<Value> values = valueRepository.findAllByMemberMemberId(member.memberId());
+            if(!values.isEmpty()){
+                List<ValueUpdateRequest> valueUpdateRequests = member.values();
+                for (ValueUpdateRequest value : valueUpdateRequests) {
+                    if(value.valueId() != null){
+                        Optional<Value> valueToUpdate = valueRepository.findById(value.valueId());
+                        valueToUpdate.get().setValue(value.value());
+                        valueRepository.save(valueToUpdate.get());
+                    }else {
+                        Value toSave = new Value();
+                        toSave.setValue(value.value());
+                        toSave.setMember(toUpdate.get());
+                        toSave.setAttribute(attributeRepository.findById(value.attributeId()).get());
+                        valueRepository.save(toSave);
+
+                    }
+                }
+            }else{
+                List<ValueUpdateRequest> valueUpdateRequests = member.values();
+                for (ValueUpdateRequest value : valueUpdateRequests ) {
+                    Value newValue = new Value();
+                    newValue.setValue(value.value());
+                    newValue.setMember(toUpdate.get());
+                    newValue.setAttribute(attributeRepository.findById(value.attributeId()).get());
+                    valueRepository.save(newValue);
+                }
+            }
+        }
+        memberRepository.save(toUpdate.get());
+        List<Value> values = valueRepository.findAllByMemberMemberId(member.memberId());
+        if(!values.isEmpty()){
+            return memberMapper.toCustomColumnMemberResponse(toUpdate.get());
+        }else {
+            return memberMapper.toResponse(toUpdate.get());
+        }
+    }
+
+    private boolean isColumnCreditAvailable() {
+        String token = headers.getHeader("Authorization").substring(7);
+        String accountOwner = jwtService.extractUsername(token);
+        return planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get().getCustomColumns() > 0;
     }
 }

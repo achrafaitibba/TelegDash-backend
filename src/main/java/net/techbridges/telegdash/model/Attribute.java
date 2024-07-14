@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.techbridges.telegdash.model.enums.ValueType;
 
+
 @Entity
 @Builder
 @Data
@@ -18,4 +19,6 @@ public class Attribute {
     private Long id;
     private String name;
     private ValueType valueType;
+    @ManyToOne
+    private Channel channel;
 }

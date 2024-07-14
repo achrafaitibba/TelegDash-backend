@@ -29,7 +29,5 @@ public class Channel {
     private Long membersCount;
     @ManyToOne
     private Account channelAdmin;
-    @OneToMany
-    private List<Attribute> attributes;
 
 }

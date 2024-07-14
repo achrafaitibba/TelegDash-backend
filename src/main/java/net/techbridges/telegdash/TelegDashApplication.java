@@ -24,4 +24,6 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, lifetime subs for clients, not visitors
     //todo, free accounts like doc, should have a limited access (eg. six months)
     //todo, save emails from subscription details after being subscribed
+    //todo, remove plan endpoints, or restrict access
+    //todo, solve conflict that may occur if member of type telegramMember belong to other channels, primary key here is telegram username
 }

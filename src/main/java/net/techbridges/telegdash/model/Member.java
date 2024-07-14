@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -28,6 +29,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private BillingFrequency billingFrequency;
     private Integer billingPeriod;
-    private Date startDate;
-    private Date endDate; // todo, start data + (billing frequency * billingPeriod)
+    private LocalDate startDate;
+    private LocalDate endDate; // todo, start data + (billing frequency * billingPeriod)
 }

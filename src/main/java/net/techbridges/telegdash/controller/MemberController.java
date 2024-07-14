@@ -1,14 +1,12 @@
 package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
+import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.service.MemberService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,5 +29,10 @@ public class MemberController {
     @GetMapping("/{channelId}/{sync}")
     public ResponseEntity<List<Object>> getAllMembers(@PathVariable("channelId") String channelId, @PathVariable("sync") Boolean sync) {
         return ResponseEntity.ok().body(memberService.getAllMembers(channelId, sync));
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<Object> updateMember(@RequestBody MemberUpdateRequest member) {
+        return ResponseEntity.ok().body(memberService.updateMember(member));
     }
 }

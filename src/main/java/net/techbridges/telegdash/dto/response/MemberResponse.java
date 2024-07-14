@@ -1,7 +1,7 @@
 package net.techbridges.telegdash.dto.response;
 
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public record MemberResponse(
         Long memberId,
@@ -13,6 +13,6 @@ public record MemberResponse(
         String memberStatus,
         String billingFrequency,
         Integer billingPeriod,
-        Date startDate,
-        Date endDate) {
+        LocalDate startDate,
+        LocalDate endDate) {
 }
