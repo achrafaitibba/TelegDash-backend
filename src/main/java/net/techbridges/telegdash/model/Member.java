@@ -22,7 +22,7 @@ public class Member {
     private Long memberId;
     @ManyToOne
     private Channel channel;
-    @OneToOne
+    @ManyToOne
     private TelegramMember telegramMember;
     @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;

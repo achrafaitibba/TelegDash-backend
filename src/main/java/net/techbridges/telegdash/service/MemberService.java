@@ -91,9 +91,18 @@ public class MemberService {
         List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
         Channel channel = channelRepository.findById(channelId).get();
         for (TelegramMember telegramMember : telegramMembers) {
-            if (memberRepository.findByTelegramMemberTelegramMemberId(telegramMember.getTelegramMemberId()).isEmpty()
-                    && telegramMemberRepository.findById(telegramMember.getTelegramMemberId()).isEmpty()) {
-                telegramMemberRepository.save(telegramMember);
+            if (memberRepository.findByTelegramMemberTelegramMemberId(telegramMember.getTelegramMemberId()).isEmpty()) {
+                if(telegramMemberRepository.findById(telegramMember.getTelegramMemberId()).isEmpty()){
+                    telegramMemberRepository.save(telegramMember);
+                }
+                memberRepository.save(
+                        Member.builder()
+                                .channel(channel)
+                                .telegramMember(telegramMember)
+                                .memberStatus(MemberStatus.ACTIVE)
+                                .build()
+                );
+            }else{
                 memberRepository.save(
                         Member.builder()
                                 .channel(channel)
