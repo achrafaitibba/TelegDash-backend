@@ -9,6 +9,7 @@ public record ChannelResponse(
         String channelName,
         List<Niche> niches,
         String description,
-        Long membersCount
+        Long membersCount,
+        boolean autoKick
 ) {
 }

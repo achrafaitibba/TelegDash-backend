@@ -8,6 +8,7 @@ public record ChannelCreateRequest(
         String name,
         String groupType,
         List<String> niches,
-        String description
+        String description,
+        boolean autoKick
 ) {
 }

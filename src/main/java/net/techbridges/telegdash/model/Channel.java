@@ -29,5 +29,6 @@ public class Channel {
     private Long membersCount;
     @ManyToOne
     private Account channelAdmin;
+    private Boolean autoKick;
 
 }

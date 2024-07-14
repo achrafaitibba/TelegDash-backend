@@ -28,4 +28,5 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, confirm email endpoint
     //todo, backup on aws ? or my server?
     //todo, limit origins to our website only
+    //todo, update channel
 }
