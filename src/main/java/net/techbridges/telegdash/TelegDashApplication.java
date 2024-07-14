@@ -15,7 +15,6 @@ public class TelegDashApplication extends SpringBootServletInitializer {
         SpringApplication.run(TelegDashApplication.class, args);
     }
     //todo, logging with AOP, create custom annotation
-    //todo, limit max members, no more than 20k for example for each account
     //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, use jackson to map data coming from telegdash.py api
     //todo, check channels infos before downgrading plans
@@ -27,4 +26,5 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, members count for plans should ignore kicked accounts !
     //todo, kicked members if joined again should update status to ACTIVE
     //todo, update/remove custom column
+    //todo, check value type by attribute valueType before update/create value
 }

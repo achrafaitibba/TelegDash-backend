@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.dto.request.AddColumnChannel;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
+import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
@@ -133,4 +134,22 @@ public class ChannelService {
         }
         return true;
     }
+
+    @SubscriptionChecker
+    public ChannelResponse updateColumn(Long attributeId, UpdateColumnRequest request) {
+        Optional<Attribute> attribute = attributeRepository.findById(attributeId);
+        if(attribute.isEmpty()){
+            throw new RequestException("The attribute id provided doesn't exist", HttpStatus.FORBIDDEN);
+        }
+        attribute.get().setName(request.attribute().name());
+        attribute.get().setValueType(request.attribute().valueType());
+        attributeRepository.save(attribute.get());
+        Channel channel = channelRepository.findById(attribute.get().getChannel().getChannelId()).get();
+        return new ChannelResponse(
+                channel.getChannelId(),
+                channel.getName(),
+                channel.getNiches(),
+                channel.getDescription(),
+                channel.getMembersCount()
+        );    }
 }
