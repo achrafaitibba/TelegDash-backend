@@ -66,6 +66,7 @@ public class ChannelService {
             );
         }
         return new ChannelResponse(
+                savedChannel.getChannelId(),
                 savedChannel.getName(),
                 savedChannel.getNiches(),
                 savedChannel.getDescription(),
@@ -116,6 +117,7 @@ public class ChannelService {
             channelRepository.save(toUpdate);
         }
         return new ChannelResponse(
+                toUpdate.getChannelId(),
                 toUpdate.getName(),
                 toUpdate.getNiches(),
                 toUpdate.getDescription(),
