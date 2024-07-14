@@ -121,7 +121,7 @@ public class MemberService {
 
     @SubscriptionChecker
     public Object updateMember(MemberUpdateRequest member) {
-                Optional<Member> toUpdate = memberRepository.findById(member.memberId());
+        Optional<Member> toUpdate = memberRepository.findById(member.memberId());
         if(toUpdate.isEmpty()){
             throw new RequestException("Member doesn't exist", HttpStatus.NOT_FOUND);
         }
@@ -134,8 +134,8 @@ public class MemberService {
             if(!values.isEmpty()){
                 List<ValueUpdateRequest> valueUpdateRequests = member.values();
                 for (ValueUpdateRequest value : valueUpdateRequests) {
-                    if(value.valueId() != null){
-                        Optional<Value> valueToUpdate = valueRepository.findById(value.valueId());
+                    Optional<Value> valueToUpdate = valueRepository.findById(value.valueId());
+                    if(valueToUpdate.isPresent()){
                         valueToUpdate.get().setValue(value.value());
                         valueRepository.save(valueToUpdate.get());
                     }else {
