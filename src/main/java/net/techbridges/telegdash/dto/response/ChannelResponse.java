@@ -10,6 +10,7 @@ public record ChannelResponse(
         List<Niche> niches,
         String description,
         Long membersCount,
-        boolean autoKick
+        boolean autoKick,
+        int autoKickAfterDays
 ) {
 }

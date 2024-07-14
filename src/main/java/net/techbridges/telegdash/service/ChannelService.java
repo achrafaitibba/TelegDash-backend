@@ -62,6 +62,7 @@ public class ChannelService {
                             .membersCount(newChannelMembersCount)
                             .channelAdmin(channelOwner.get())
                             .autoKick(channel.autoKick())
+                            .autoKickAfterDays(channel.autoKickAfterDays())
                             .build()
             );
         }
@@ -71,7 +72,8 @@ public class ChannelService {
                 savedChannel.getNiches(),
                 savedChannel.getDescription(),
                 savedChannel.getMembersCount(),
-                savedChannel.getAutoKick()
+                savedChannel.getAutoKick(),
+                savedChannel.getAutoKickAfterDays()
         );
     }
 
@@ -123,7 +125,8 @@ public class ChannelService {
                 toUpdate.getNiches(),
                 toUpdate.getDescription(),
                 toUpdate.getMembersCount(),
-                toUpdate.getAutoKick()
+                toUpdate.getAutoKick(),
+                toUpdate.getAutoKickAfterDays()
         );
     }
 
@@ -152,7 +155,8 @@ public class ChannelService {
                 channel.getNiches(),
                 channel.getDescription(),
                 channel.getMembersCount(),
-                channel.getAutoKick()
+                channel.getAutoKick(),
+                channel.getAutoKickAfterDays()
         );    }
 
     @SubscriptionChecker
@@ -173,7 +177,8 @@ public class ChannelService {
                 channel.getNiches(),
                 channel.getDescription(),
                 channel.getMembersCount(),
-                channel.getAutoKick()
+                channel.getAutoKick(),
+                channel.getAutoKickAfterDays()
         );
     }
 }

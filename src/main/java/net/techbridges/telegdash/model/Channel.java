@@ -30,5 +30,6 @@ public class Channel {
     @ManyToOne
     private Account channelAdmin;
     private Boolean autoKick;
+    private Integer autoKickAfterDays;
 
 }

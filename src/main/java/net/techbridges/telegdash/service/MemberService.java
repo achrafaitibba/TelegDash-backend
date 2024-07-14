@@ -2,34 +2,34 @@ package net.techbridges.telegdash.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
+import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
 import net.techbridges.telegdash.dto.request.ValueUpdateRequest;
-import net.techbridges.telegdash.dto.response.CustomColumnMemberResponse;
 import net.techbridges.telegdash.dto.response.MemberResponse;
-import net.techbridges.telegdash.dto.response.ValueResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.mapper.MemberMapper;
 import net.techbridges.telegdash.model.*;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
-import net.techbridges.telegdash.model.enums.ReminderFrequency;
 import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class MemberService {
     private final TelegramMemberRepository telegramMemberRepository;
     private final TelegDashPyApiController telegDashPyApiController;
@@ -72,6 +72,7 @@ public class MemberService {
     }
 
     private void synchronizeDatabase(String channelId) {
+        setStatusExpired(channelId);
         List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
         Channel channel = channelRepository.findById(channelId).get();
         for (TelegramMember telegramMember : telegramMembers) {
@@ -158,7 +159,7 @@ public class MemberService {
 
     @SubscriptionChecker
     public List<MemberResponse> kickMembers(String channelId, List<String> memberIds) {
-        if(memberIds.isEmpty()){
+        if (memberIds.isEmpty()) {
             throw new RequestException("The list of members is empty", HttpStatus.NOT_FOUND);
         }
         telegDashPyApiController.kickMembers(channelId, memberIds);
@@ -171,5 +172,21 @@ public class MemberService {
         return members.stream().map(
                 memberMapper::toResponse
         ).toList();
+    }
+
+    public void setStatusExpired(String channelId) {
+        List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
+        for (Member member : members) {
+            LocalDate endDate = member.getEndDate();
+            if(endDate != null){
+                boolean isExpired = endDate.isBefore(LocalDate.now());
+                if (isExpired) {
+                    member.setMemberStatus(MemberStatus.EXPIRED);
+                    memberRepository.save(member);
+                }
+            }
+
+        }
+
     }
 }

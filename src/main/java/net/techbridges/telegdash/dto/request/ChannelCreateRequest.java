@@ -9,6 +9,7 @@ public record ChannelCreateRequest(
         String groupType,
         List<String> niches,
         String description,
-        boolean autoKick
+        boolean autoKick,
+        int autoKickAfterDays
 ) {
 }
