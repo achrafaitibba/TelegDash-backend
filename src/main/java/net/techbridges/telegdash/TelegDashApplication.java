@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @EnableScheduling
-public class TelegDashApplication extends SpringBootServletInitializer {
+public class TelegDashApplication{
     public static void main(String[] args) {
         SpringApplication.run(TelegDashApplication.class, args);
     }
@@ -29,5 +29,4 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, backup on aws ? or my server?
     //todo, limit origins to our website only
     //todo, update channel
-    //todo, remove tomcat provided dependency, remove extend servlet from main
 }
