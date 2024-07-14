@@ -11,7 +11,6 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 @AllArgsConstructor
 public class TelegDashApplication extends SpringBootServletInitializer {
-    private final PlanService planService;
     public static void main(String[] args) {
         SpringApplication.run(TelegDashApplication.class, args);
     }
@@ -27,4 +26,5 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, remove plan endpoints, or restrict access
     //todo, members count for plans should ignore kicked accounts !
     //todo, kicked members if joined again should update status to ACTIVE
+    //todo, update/remove custom column
 }
