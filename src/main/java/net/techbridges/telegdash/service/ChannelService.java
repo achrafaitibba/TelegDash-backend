@@ -151,6 +151,7 @@ public class ChannelService {
                 channel.getMembersCount()
         );    }
 
+    @SubscriptionChecker
     public ChannelResponse deleteColumn(Long attributeId) {
         Optional<Attribute> attribute = attributeRepository.findById(attributeId);
         if(attribute.isEmpty()){
