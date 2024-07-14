@@ -42,7 +42,7 @@ public class ChannelController {
         return ResponseEntity.ok().body(channelService.addColumn(request));
     }
 
-    @PostMapping("/update/{attributeId}")
+    @PostMapping("/customColumn/update/{attributeId}")
     public ResponseEntity<ChannelResponse> updateColumn(@PathVariable Long attributeId, @RequestBody UpdateColumnRequest request) {
         return ResponseEntity.ok().body(channelService.updateColumn(attributeId, request));
     }
