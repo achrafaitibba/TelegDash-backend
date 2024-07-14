@@ -46,5 +46,9 @@ public class ChannelController {
     public ResponseEntity<ChannelResponse> updateColumn(@PathVariable Long attributeId, @RequestBody UpdateColumnRequest request) {
         return ResponseEntity.ok().body(channelService.updateColumn(attributeId, request));
     }
+    @DeleteMapping("/customColumn/delete/{attributeId}")
+    public ResponseEntity<ChannelResponse> deleteColumn(@PathVariable Long attributeId) {
+        return ResponseEntity.ok().body(channelService.deleteColumn(attributeId));
+    }
 
 }

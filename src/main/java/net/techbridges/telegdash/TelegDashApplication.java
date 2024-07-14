@@ -25,6 +25,5 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, remove plan endpoints, or restrict access
     //todo, members count for plans should ignore kicked accounts !
     //todo, kicked members if joined again should update status to ACTIVE
-    //todo, update/remove custom column
     //todo, check value type by attribute valueType before update/create value
 }

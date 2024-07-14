@@ -8,15 +8,13 @@ import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
-import net.techbridges.telegdash.model.Account;
-import net.techbridges.telegdash.model.Attribute;
-import net.techbridges.telegdash.model.Channel;
-import net.techbridges.telegdash.model.Plan;
+import net.techbridges.telegdash.model.*;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
 import net.techbridges.telegdash.repository.AccountRepository;
 import net.techbridges.telegdash.repository.AttributeRepository;
 import net.techbridges.telegdash.repository.ChannelRepository;
+import net.techbridges.telegdash.repository.ValueRepository;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
@@ -32,7 +30,7 @@ public class ChannelService {
     private final ChannelRepository channelRepository;
     private final AccountRepository accountRepository;
     private final AttributeRepository attributeRepository;
-
+    private final ValueRepository valueRepository;
     @SubscriptionChecker
     public Integer checkAdminStatus(GroupType groupType, String channelId){
         try{
@@ -152,4 +150,24 @@ public class ChannelService {
                 channel.getDescription(),
                 channel.getMembersCount()
         );    }
+
+    public ChannelResponse deleteColumn(Long attributeId) {
+        Optional<Attribute> attribute = attributeRepository.findById(attributeId);
+        if(attribute.isEmpty()){
+            throw new RequestException("The attribute id provided doesn't exist", HttpStatus.FORBIDDEN);
+        }
+        List<Value> values = valueRepository.findAllByAttribute(attribute.get());
+        for(Value value : values){
+            valueRepository.delete(value);
+        }
+        attributeRepository.delete(attribute.get());
+        Channel channel = channelRepository.findById(attribute.get().getChannel().getChannelId()).get();
+        return new ChannelResponse(
+                channel.getChannelId(),
+                channel.getName(),
+                channel.getNiches(),
+                channel.getDescription(),
+                channel.getMembersCount()
+        );
+    }
 }
