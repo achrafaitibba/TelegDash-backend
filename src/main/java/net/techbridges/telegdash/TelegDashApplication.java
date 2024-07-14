@@ -1,15 +1,14 @@
 package net.techbridges.telegdash;
 
-import lombok.AllArgsConstructor;
-import net.techbridges.telegdash.service.PlanService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
-@AllArgsConstructor
+@EnableScheduling
 public class TelegDashApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         SpringApplication.run(TelegDashApplication.class, args);
@@ -26,4 +25,7 @@ public class TelegDashApplication extends SpringBootServletInitializer {
     //todo, members count for plans should ignore kicked accounts !
     //todo, kicked members if joined again should update status to ACTIVE
     //todo, check value type by attribute valueType before update/create value
+    //todo, confirm email endpoint
+    //todo, backup on aws ? or my server?
+    //todo, limit origins to our website only
 }

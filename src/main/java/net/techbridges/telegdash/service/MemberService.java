@@ -14,14 +14,19 @@ import net.techbridges.telegdash.mapper.MemberMapper;
 import net.techbridges.telegdash.model.*;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
+import net.techbridges.telegdash.model.enums.ReminderFrequency;
 import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @AllArgsConstructor
