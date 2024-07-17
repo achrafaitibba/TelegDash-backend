@@ -2,7 +2,6 @@ package net.techbridges.telegdash.telegdashTelethonClientGateway.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.PackagePrivate;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.model.BasicMember;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.AdminService;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.TelegramMemberService;
@@ -34,10 +33,6 @@ public class TelegDashPyApiController {
         return memberService.kickMembers(restTemplate, channelId, memberIds);
     }
 
-    public String sendMessageToAdmin(String phoneNumber, Object[] users, String message){
-        return adminService.sendMessageToUsers(restTemplate, phoneNumber, users, message);
-    }
-
     public String sendMessageToAdmin(String chatId, String message) {
         return adminService.sendMessageToAdmin(restTemplate, chatId, message);
     }
@@ -49,7 +44,9 @@ public class TelegDashPyApiController {
     public String submitCode( String phoneNumber, String code) {
         return adminService.submitCode(restTemplate, phoneNumber, code);
     }
-
+    public String sendMessageToAdmin(String phoneNumber, Object[] users, String message){
+        return adminService.sendMessageToUsers(restTemplate, phoneNumber, users, message);
+    }
     /**
      * 1 = BOT is admin
      * 2 = Bot is admin and have ban_user right > for groups
