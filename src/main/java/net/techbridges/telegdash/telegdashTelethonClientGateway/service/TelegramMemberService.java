@@ -71,10 +71,13 @@ public class TelegramMemberService {
 
 
     public int kickMembers(RestTemplate restTemplate, String channelId, List<String> memberIds) {
+        List<String> ignoreBotId = memberIds.stream()
+                .filter(s -> !s.equals("Telegdash_bot") && !s.equals("7014116921") && Long.parseLong(s) != 7014116921L)
+                .toList();
         try {
             HashMap<String, Object> requestBody = new HashMap<>();
             requestBody.put("channel_id", channelId);
-            requestBody.put("member_ids", memberIds);
+            requestBody.put("member_ids", ignoreBotId);
             HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
             ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
                     urlBuilder().concat("/kick"),

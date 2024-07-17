@@ -3,7 +3,6 @@ package net.techbridges.telegdash;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
@@ -31,4 +30,6 @@ public class TelegDashApplication{
     //todo, endpoint to set memberStatus ACTIVE for list of member to update their status
     //todo, send message to expired members using user_session, create the python endpoint,
     //todo, store sessions somewhere as a backup
+    //todo, recover password
+    //todo, email verification
 }

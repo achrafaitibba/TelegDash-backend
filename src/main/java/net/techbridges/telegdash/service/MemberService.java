@@ -159,16 +159,17 @@ public class MemberService {
 
     @SubscriptionChecker
     public List<MemberResponse> kickMembers(String channelId, List<String> memberIds) {
-        if (memberIds.isEmpty()) {
-            throw new RequestException("The list of members is empty", HttpStatus.NOT_FOUND);
+        List<Member> members = new ArrayList<>();
+        if (!memberIds.isEmpty()) {
+            telegDashPyApiController.kickMembers(channelId, memberIds);
+            for (String id : memberIds) {
+                Optional<Member> toKick = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(id, channelId);
+                toKick.get().setMemberStatus(MemberStatus.KICKED);
+                memberRepository.save(toKick.get());
+            }
+            members = memberRepository.findAllByChannelChannelId(channelId);
+
         }
-        telegDashPyApiController.kickMembers(channelId, memberIds);
-        for (String id : memberIds) {
-            Optional<Member> toKick = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(id, channelId);
-            toKick.get().setMemberStatus(MemberStatus.KICKED);
-            memberRepository.save(toKick.get());
-        }
-        List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
         return members.stream().map(
                 memberMapper::toResponse
         ).toList();
@@ -190,53 +191,60 @@ public class MemberService {
 
     }
 
-//
-//    //todo, schedule it to run every 48H
-//    //@Scheduled(fixedRateString = "30000")
-//    public void scheduleKicking() {
-//        for (Channel channel : channelWithAutoKickEnabled()) {
-//            log.info("Has enabled autoKicking", channel.getName() + "\n");
-//            autoKickMembers(channel.getChannelId());
-//        }
-//    }
-//
-//    private List<Channel> channelWithAutoKickEnabled() {
-//        return channelRepository.findAll().stream().filter(
-//                channel -> channel.getAutoKick()
-//        ).toList();
-//    }
-//
-//    private void autoKickMembers(String channelID) {
-//        Channel channel = channelRepository.findById(channelID).get();
-//        if (isAutoKickAuthorized(channel)) {
-//            log.info("Has autoKicking autorized", channel.getName() + "\n");
-//            List<Member> members = memberRepository.findAllByChannelChannelId(channelID);
-//            List<String> expiredMembers = new ArrayList<>();
-//            for (Member member : members) {
-//                if (isExpired(member.getMemberId(), channel.getAutoKickAfterDays()) && member.getMemberStatus() != MemberStatus.KICKED) {
-//                    expiredMembers.add(member.getTelegramMember().getTelegramMemberId());
-//                    log.info("Member will be kicked ::", member.getTelegramMember().getTelegramMemberId());
-//                }
-//            }
-//            kickMembers(channelID, expiredMembers);
-//        }
-//    }
-//
-//
-//    private boolean isExpired(Long memberID, Integer extendDays) {
-//        log.info("Checking if expired : ", memberID + "\n");
-//        if (memberRepository.findById(memberID).get().getEndDate() != null) {
-//            log.info("Member endDate is null", memberRepository.findById(memberID).get().getTelegramMember());
-//            return false;
-//        } else {
-//            return memberRepository.findById(memberID).get().getEndDate().plusDays(extendDays).isBefore(LocalDate.now());
-//        }
-//    }
-//
-//    private boolean isAutoKickAuthorized(Channel channel) {
-//        String accountOwner = channel.getChannelAdmin().getUsername();
-//        Plan plan = planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get();
-//        return plan.getAutoKickingMember();
-//    }
+
+    @Scheduled(fixedRateString = "604800000")
+    public void scheduleKicking() {
+        log.info("Schedule autokicking expired subscriptions started at {}", LocalDate.now());
+        for (Channel channel : channelWithAutoKickEnabled()) {
+            log.info("Has enabled autoKicking {}", channel.getName() + "\n");
+            autoKickMembers(channel.getChannelId());
+        }
+    }
+
+    private List<Channel> channelWithAutoKickEnabled() {
+        log.info("Check channels with autoKicking enabled");
+        return channelRepository.findAll().stream().filter(
+                channel -> channel.getAutoKick()
+        ).toList();
+    }
+
+    public void autoKickMembers(String channelID) {
+        Channel channel = channelRepository.findById(channelID).get();
+        if (isAutoKickAuthorized(channel)) {
+            log.info("Has autoKicking authorized {}", channel.getName() + "\n");
+            List<Member> members = memberRepository.findAllByChannelChannelId(channelID);
+            List<String> expiredMembers = new ArrayList<>();
+            for (Member member : members) {
+                log.info("Checking if member " + member.getMemberId() + " is expired");
+                if (isExpired(member.getMemberId(), channel.getAutoKickAfterDays()) && member.getMemberStatus() != MemberStatus.KICKED) {
+                    expiredMembers.add(member.getTelegramMember().getTelegramMemberId());
+                    log.info("Member will be kicked {}::", member.getTelegramMember().getTelegramMemberId());
+                }else{
+                    log.info("Wont't be kicked " + member.getMemberId());
+                }
+            }
+            kickMembers(channelID, expiredMembers);
+        }
+    }
+
+
+    private boolean isExpired(Long memberID, Integer extendDays) {
+        log.info("Checking if expired : {}", memberID + "\n");
+        if (memberRepository.findById(memberID).get().getEndDate() == null) {
+            log.info("Member endDate is null {}", memberRepository.findById(memberID).get().getTelegramMember().getTelegramMemberId());
+            return false;
+        } else{
+            Member member = memberRepository.findById(memberID).get();
+            LocalDate endDate = member.getEndDate();
+            return endDate.plusDays(extendDays).isBefore(LocalDate.now());
+        }
+    }
+
+    @SubscriptionChecker
+    private boolean isAutoKickAuthorized(Channel channel) {
+        String accountOwner = channel.getChannelAdmin().getUsername();
+        Plan plan = planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get();
+        return plan.getAutoKickingMember();
+    }
 
 }
