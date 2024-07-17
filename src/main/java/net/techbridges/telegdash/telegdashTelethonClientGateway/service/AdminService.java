@@ -65,4 +65,18 @@ public class AdminService {
         return String.valueOf(responseEntity.getBody().get("message"));
     }
 
+    public String createSession(RestTemplate restTemplate, String phoneNumber){
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("phone_number", phoneNumber);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
+        ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
+                urlBuilder().concat("/create-session"),
+                HttpMethod.POST,
+                requestEntity,
+                HashMap.class
+        );
+        return String.valueOf(responseEntity.getBody().get("message"));
+    }
+
+
 }

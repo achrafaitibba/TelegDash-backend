@@ -2,6 +2,7 @@ package net.techbridges.telegdash.telegdashTelethonClientGateway.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.PackagePrivate;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.model.BasicMember;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.AdminService;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.service.TelegramMemberService;
@@ -40,6 +41,11 @@ public class TelegDashPyApiController {
     public String sendMessageToAdmin(String chatId, String message) {
         return adminService.sendMessageToAdmin(restTemplate, chatId, message);
     }
+
+    public String createSession(String phoneNumber) {
+        return adminService.createSession(restTemplate, phoneNumber);
+    }
+
 
     /**
      * 1 = BOT is admin
