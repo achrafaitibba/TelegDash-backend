@@ -46,6 +46,9 @@ public class TelegDashPyApiController {
         return adminService.createSession(restTemplate, phoneNumber);
     }
 
+    public String submitCode( String phoneNumber, String code) {
+        return adminService.submitCode(restTemplate, phoneNumber, code);
+    }
 
     /**
      * 1 = BOT is admin

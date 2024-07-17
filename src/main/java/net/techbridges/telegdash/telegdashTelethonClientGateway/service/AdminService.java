@@ -78,5 +78,17 @@ public class AdminService {
         return String.valueOf(responseEntity.getBody().get("message"));
     }
 
-
+    public String submitCode(RestTemplate restTemplate, String phoneNumber, String code){
+        HashMap<String, Object> requestBody = new HashMap<>();
+        requestBody.put("phone_number", phoneNumber);
+        requestBody.put("code", code);
+        HttpEntity<Object> requestEntity = new HttpEntity<>(requestBody, auth.authenticate());
+        ResponseEntity<HashMap> responseEntity = restTemplate.exchange(
+                urlBuilder().concat("/submit-code"),
+                HttpMethod.POST,
+                requestEntity,
+                HashMap.class
+        );
+        return String.valueOf(responseEntity.getBody().get("message"));
+    }
 }
