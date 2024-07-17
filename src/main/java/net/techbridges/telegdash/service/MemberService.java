@@ -174,7 +174,7 @@ public class MemberService {
         ).toList();
     }
 
-    public void setStatusExpired(String channelId) {
+    private void setStatusExpired(String channelId) {
         List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
         for (Member member : members) {
             LocalDate endDate = member.getEndDate();
@@ -189,4 +189,54 @@ public class MemberService {
         }
 
     }
+
+//
+//    //todo, schedule it to run every 48H
+//    //@Scheduled(fixedRateString = "30000")
+//    public void scheduleKicking() {
+//        for (Channel channel : channelWithAutoKickEnabled()) {
+//            log.info("Has enabled autoKicking", channel.getName() + "\n");
+//            autoKickMembers(channel.getChannelId());
+//        }
+//    }
+//
+//    private List<Channel> channelWithAutoKickEnabled() {
+//        return channelRepository.findAll().stream().filter(
+//                channel -> channel.getAutoKick()
+//        ).toList();
+//    }
+//
+//    private void autoKickMembers(String channelID) {
+//        Channel channel = channelRepository.findById(channelID).get();
+//        if (isAutoKickAuthorized(channel)) {
+//            log.info("Has autoKicking autorized", channel.getName() + "\n");
+//            List<Member> members = memberRepository.findAllByChannelChannelId(channelID);
+//            List<String> expiredMembers = new ArrayList<>();
+//            for (Member member : members) {
+//                if (isExpired(member.getMemberId(), channel.getAutoKickAfterDays()) && member.getMemberStatus() != MemberStatus.KICKED) {
+//                    expiredMembers.add(member.getTelegramMember().getTelegramMemberId());
+//                    log.info("Member will be kicked ::", member.getTelegramMember().getTelegramMemberId());
+//                }
+//            }
+//            kickMembers(channelID, expiredMembers);
+//        }
+//    }
+//
+//
+//    private boolean isExpired(Long memberID, Integer extendDays) {
+//        log.info("Checking if expired : ", memberID + "\n");
+//        if (memberRepository.findById(memberID).get().getEndDate() != null) {
+//            log.info("Member endDate is null", memberRepository.findById(memberID).get().getTelegramMember());
+//            return false;
+//        } else {
+//            return memberRepository.findById(memberID).get().getEndDate().plusDays(extendDays).isBefore(LocalDate.now());
+//        }
+//    }
+//
+//    private boolean isAutoKickAuthorized(Channel channel) {
+//        String accountOwner = channel.getChannelAdmin().getUsername();
+//        Plan plan = planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get();
+//        return plan.getAutoKickingMember();
+//    }
+
 }

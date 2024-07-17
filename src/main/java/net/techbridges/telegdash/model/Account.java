@@ -33,6 +33,7 @@ public class Account implements UserDetails {
         createdAt = LocalDateTime.now();
     }
     @OneToOne
+    //todo, make it embeddable to keep the same plan even if it's updated
     private Plan plan;
     private String subscriptionId;
     @OneToMany

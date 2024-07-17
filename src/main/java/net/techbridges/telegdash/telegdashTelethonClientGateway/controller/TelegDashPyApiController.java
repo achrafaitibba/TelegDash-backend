@@ -33,6 +33,10 @@ public class TelegDashPyApiController {
         return memberService.kickMembers(restTemplate, channelId, memberIds);
     }
 
+    public String sendMessageToAdmin(String phoneNumber, Object[] users, String message){
+        return adminService.sendMessageToUsers(restTemplate, phoneNumber, users, message);
+    }
+
     public String sendMessageToAdmin(String chatId, String message) {
         return adminService.sendMessageToAdmin(restTemplate, chatId, message);
     }
