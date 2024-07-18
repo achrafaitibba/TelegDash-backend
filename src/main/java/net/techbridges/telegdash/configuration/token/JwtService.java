@@ -45,6 +45,10 @@ public class JwtService {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
+    public String generateRecoverPasswordToken(UserDetails userDetails){
+        return buildToken(new HashMap<>(), userDetails, 3600000);
+    }
+
     public String generateRefreshToken(
             UserDetails userDetails
     ) {

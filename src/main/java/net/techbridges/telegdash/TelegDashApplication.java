@@ -28,8 +28,7 @@ public class TelegDashApplication{
     //todo, limit origins to our website only
     //todo, update channel
     //todo, endpoint to set memberStatus ACTIVE for list of member to update their status
-    //todo, send message to expired members using user_session, create the python endpoint,
     //todo, store sessions somewhere as a backup
-    //todo, recover password
     //todo, email verification
+    //todo, update email
 }

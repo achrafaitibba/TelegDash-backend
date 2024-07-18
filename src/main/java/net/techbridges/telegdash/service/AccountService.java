@@ -25,9 +25,13 @@ import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import net.techbridges.telegdash.repository.AccountRepository;
 import net.techbridges.telegdash.utils.InputChecker;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +53,10 @@ public class AccountService {
     private final AuthenticationManager authenticationManager;
     private final PlanService planService;
     private final PaymentController paymentController;
+    private final UserDetailsService userDetailsService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Value("${app.security.allowed.origin}")
+    private String origin;
 
     @Transactional
     public AccountRegisterResponse register(AccountRegisterRequest account) throws Exception{
@@ -173,5 +181,26 @@ public class AccountService {
         }
     }
 
+    public String generatePasswordRecoverUrl(String email) {
+        Optional<Account> account = accountRepository.findByEmail(email);
+        if (account.isEmpty()) {
+            throw new RequestException("User not found", HttpStatus.NOT_FOUND);
+        }
+        UserDetails userDetails = userDetailsService.loadUserByUsername(account.get().getUsername());
+        var jwtToken = jwtService.generateRecoverPasswordToken(userDetails);
+        saveUserToken(Account.builder().email(email).password(account.get().getPassword()).build(), jwtToken);
+        return origin.concat("/auth/reset/".concat(jwtToken));
+    }
+
+
+    public AccountAuthResponse recoverPassword(String email, String newPassword) {
+        Account account = accountRepository.findByEmail(email).orElseThrow(() -> new RequestException("User not found with email: " + email, HttpStatus.NOT_FOUND));
+        account.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        accountRepository.save(account);
+        var jwtToken = jwtService.generateToken(new HashMap<>(), account);
+        var refreshToken = jwtService.generateRefreshToken(account);
+        saveUserToken(Account.builder().email(email).password(account.getPassword()).build(), jwtToken);
+        return new AccountAuthResponse(email, jwtToken, refreshToken);
+    }
 
 }

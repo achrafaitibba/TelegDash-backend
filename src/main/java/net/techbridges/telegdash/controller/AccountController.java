@@ -9,6 +9,7 @@ import net.techbridges.telegdash.dto.request.AccountRegisterRequest;
 import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.service.AccountService;
+import net.techbridges.telegdash.service.EmailService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountService accountService;
+    private final EmailService emailService;
 
 
     @PostMapping("/register")
@@ -36,6 +38,16 @@ public class AccountController {
             HttpServletResponse response
     )throws Exception{
         accountService.refreshToken(request, response);
+    }
+
+    @GetMapping("/recover-password-url/{email}")
+    public String passwordResetUrl(@PathVariable String email) {
+        return emailService.passwordResetUrl(email);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<AccountAuthResponse> recoverPassword(@RequestBody AccountAuthRequest request) {
+        return ResponseEntity.ok().body(accountService.recoverPassword(request.email(), request.password()));
     }
 
     @GetMapping("/test")

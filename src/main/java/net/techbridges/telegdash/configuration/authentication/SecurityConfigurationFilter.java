@@ -40,6 +40,7 @@ public class SecurityConfigurationFilter {
                         "/api/v1.0/accounts/authenticate",
                         "/api/v1.0/plans/**",
                         "/api/v1.0/channels/status/**",
+                        "/api/v1.0/accounts/recover-password-url/**",
                         "/paypal",
                         "/api/v1.0/accounts/test",
                         "swagger-ui/index.html",
