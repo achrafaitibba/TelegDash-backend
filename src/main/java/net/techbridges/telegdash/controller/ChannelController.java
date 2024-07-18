@@ -11,6 +11,8 @@ import net.techbridges.telegdash.service.ChannelService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1.0/channels")
 @AllArgsConstructor
@@ -49,6 +51,11 @@ public class ChannelController {
     @DeleteMapping("/customColumn/delete/{attributeId}")
     public ResponseEntity<ChannelResponse> deleteColumn(@PathVariable Long attributeId) {
         return ResponseEntity.ok().body(channelService.deleteColumn(attributeId));
+    }
+
+    @GetMapping("/{groupType}/{email}")
+    public ResponseEntity<List<ChannelResponse>> getAllByType(@PathVariable String groupType, @PathVariable String email) {
+        return ResponseEntity.ok().body(channelService.getAllByType(email, groupType));
     }
 
 }

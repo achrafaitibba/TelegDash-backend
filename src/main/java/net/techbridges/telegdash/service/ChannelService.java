@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -180,5 +181,20 @@ public class ChannelService {
                 channel.getAutoKick(),
                 channel.getAutoKickAfterDays()
         );
+    }
+
+    public List<ChannelResponse> getAllByType(String email, String groupType) {
+        List<Channel> all = channelRepository.findAllByChannelAdmin(accountRepository.findByEmail(email).get());
+        return all.stream().filter(channel -> channel.getGroupType().toString().endsWith(groupType)).toList().stream().map(
+                channel -> new ChannelResponse(
+                        channel.getChannelId(),
+                        channel.getName(),
+                        channel.getNiches(),
+                        channel.getDescription(),
+                        channel.getMembersCount(),
+                        channel.getAutoKick(),
+                        channel.getAutoKickAfterDays()
+                )
+        ).toList();
     }
 }
