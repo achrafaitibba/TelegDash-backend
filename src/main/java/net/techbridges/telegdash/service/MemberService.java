@@ -86,6 +86,9 @@ public class MemberService {
                                 .memberStatus(MemberStatus.ACTIVE)
                                 .build()
                 );
+            }else if (!currentMember.get().getMemberStatus().equals(MemberStatus.EXPIRED)){
+                currentMember.get().setMemberStatus(MemberStatus.ACTIVE);
+                memberRepository.save(currentMember.get());
             }
         }
     }

@@ -19,8 +19,8 @@ public class MemberMapper {
     public MemberResponse toResponse(Member member) {
         return new MemberResponse(
                 member.getMemberId(),
-                member.getTelegramMember().getTelegramMemberId(),
                 member.getChannel().getChannelId(),
+                member.getTelegramMember().getTelegramMemberId(),
                 member.getTelegramMember().getUsername(),
                 member.getTelegramMember().getFirstName(),
                 member.getTelegramMember().getLastName(),

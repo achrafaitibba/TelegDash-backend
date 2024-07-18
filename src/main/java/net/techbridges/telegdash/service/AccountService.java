@@ -130,7 +130,9 @@ public class AccountService {
                         account.password()
                 )
         );
-        var jwtToken = jwtService.generateToken(new HashMap<>(), toAuthenticate.get());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("subscriptionId", toAuthenticate.get().getSubscriptionId());
+        var jwtToken = jwtService.generateToken(claims, toAuthenticate.get());
         var refreshToken = jwtService.generateRefreshToken(toAuthenticate.get());
         /** revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);

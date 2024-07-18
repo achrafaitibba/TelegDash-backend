@@ -16,15 +16,15 @@ public class TelegDashApplication{
     //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
 
-    //todo, channels/groups endpoint to get All
-    //todo, kicked members if joined again should update status to ACTIVE
+    //todo, pagination
+    //todo, some endpoints shouldn't return list of members, eg: delete
+    //todo, plans controller > edit/delete...
     //todo, remove plan endpoints, or restrict access
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
     //todo, update channel
     //todo, endpoint to set memberStatus ACTIVE for list of member to update their status
     //todo, update email
-    //todo, plans controller > edit/delete...
 
     //todo, lifetime subs for clients, not visitors
     //todo, free accounts like doc, should have a limited access (eg. six months)
