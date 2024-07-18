@@ -17,8 +17,7 @@ public class TelegDashApplication{
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
 
 
-    //todo, plans controller > edit/delete...
-    //todo, remove plan endpoints, or restrict access
+    //todo, test embeddable plans
     //todo, some endpoints shouldn't return list of members, eg: delete
     //todo, sendMessageToUsers (create session, get code and submit it)
     //todo, scheduled admin reminder : sendMessageToAdmin
