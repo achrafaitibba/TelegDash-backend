@@ -161,8 +161,7 @@ public class MemberService {
     }
 
     @SubscriptionChecker
-    public List<MemberResponse> kickMembers(String channelId, List<String> memberIds) {
-        List<Member> members = new ArrayList<>();
+    public String kickMembers(String channelId, List<String> memberIds) {
         if (!memberIds.isEmpty()) {
             telegDashPyApiController.kickMembers(channelId, memberIds);
             for (String id : memberIds) {
@@ -170,12 +169,8 @@ public class MemberService {
                 toKick.get().setMemberStatus(MemberStatus.KICKED);
                 memberRepository.save(toKick.get());
             }
-            members = memberRepository.findAllByChannelChannelId(channelId);
-
         }
-        return members.stream().map(
-                memberMapper::toResponse
-        ).toList();
+        return "Successfully kicked";
     }
 
     private void setStatusExpired(String channelId) {

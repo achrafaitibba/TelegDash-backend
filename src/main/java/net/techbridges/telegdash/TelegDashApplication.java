@@ -18,7 +18,6 @@ public class TelegDashApplication{
 
 
     //todo, test embeddable plans
-    //todo, some endpoints shouldn't return list of members, eg: delete
     //todo, sendMessageToUsers (create session, get code and submit it)
     //todo, scheduled admin reminder : sendMessageToAdmin
     //todo, pagination

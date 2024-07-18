@@ -2,7 +2,6 @@ package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
-import net.techbridges.telegdash.dto.response.MemberResponse;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.service.MemberService;
@@ -39,7 +38,7 @@ public class MemberController {
 
 
     @PostMapping("/delete/{channelId}")
-    public ResponseEntity<List<MemberResponse>> kickMembers(@PathVariable String channelId, @RequestBody List<String> memberIds) {
+    public ResponseEntity<String> kickMembers(@PathVariable String channelId, @RequestBody List<String> memberIds) {
         return ResponseEntity.ok().body(memberService.kickMembers(channelId, memberIds));
     }
 }
