@@ -16,14 +16,17 @@ public class TelegDashApplication{
     //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
 
-    //todo, pagination
-    //todo, some endpoints shouldn't return list of members, eg: delete
+
     //todo, plans controller > edit/delete...
     //todo, remove plan endpoints, or restrict access
+    //todo, some endpoints shouldn't return list of members, eg: delete
+    //todo, sendMessageToUsers (create session, get code and submit it)
+    //todo, scheduled admin reminder : sendMessageToAdmin
+    //todo, pagination
+    //todo, sync with DB should be limited, to avoid provoking DB, make it once a day or something
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
     //todo, update channel
-    //todo, endpoint to set memberStatus ACTIVE for list of member to update their status
     //todo, update email
 
     //todo, lifetime subs for clients, not visitors

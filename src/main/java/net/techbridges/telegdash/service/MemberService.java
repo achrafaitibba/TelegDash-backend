@@ -196,7 +196,7 @@ public class MemberService {
 
 
     @Scheduled(fixedRateString = "604800000")
-    public void scheduleKicking() {
+    public void scheduleAutoKicking() {
         log.info("Schedule autokicking expired subscriptions started at {}", LocalDate.now());
         for (Channel channel : channelWithAutoKickEnabled()) {
             log.info("Has enabled autoKicking {}", channel.getName() + "\n");
