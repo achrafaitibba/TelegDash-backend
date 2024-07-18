@@ -3,7 +3,6 @@ package net.techbridges.telegdash.service;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -34,15 +33,11 @@ public class EmailService {
         javaMailSender.send(mimeMessage);
     }
 
-
-    public String passwordResetUrl(String email){
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setSubject("Password Recovery");
-        message.setText("Here is your password reset URL, valid for 1H: "+ accountService.generatePasswordRecoverUrl(email));
-        javaMailSender.send(message);
-        return accountService.generatePasswordRecoverUrl(email);
+    public String passwordResetUrl(String email, String templateName, Context context) throws Exception {
+        String passwordResetUrl = accountService.generatePasswordRecoverUrl(email);
+        context.setVariable("passwordResetUrl", passwordResetUrl);
+        sendEmailWithHtmlTemplate(email, "Password Recovery", templateName, context);
+        return passwordResetUrl;
     }
-
 
 }

@@ -11,7 +11,9 @@ import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.service.AccountService;
 import net.techbridges.telegdash.service.EmailService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.context.Context;
 
 
 @RestController
@@ -41,9 +43,13 @@ public class AccountController {
     }
 
     @GetMapping("/recover-password-url/{email}")
-    public String passwordResetUrl(@PathVariable String email) {
-        return emailService.passwordResetUrl(email);
+    public String passwordResetUrl(@PathVariable String email, Model model) throws Exception {
+        Context context = new Context();
+        String passwordResetUrl = emailService.passwordResetUrl(email, "recover-password", context);
+        model.addAttribute("passwordResetUrl", passwordResetUrl);
+        return "recover-password";
     }
+
 
     @PostMapping("/reset-password")
     public ResponseEntity<AccountAuthResponse> recoverPassword(@RequestBody AccountAuthRequest request) {

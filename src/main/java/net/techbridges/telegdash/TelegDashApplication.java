@@ -30,5 +30,6 @@ public class TelegDashApplication{
     //todo, endpoint to set memberStatus ACTIVE for list of member to update their status
     //todo, store sessions somewhere as a backup
     //todo, email verification
+    //todo, fix links in email templates
     //todo, update email
 }
