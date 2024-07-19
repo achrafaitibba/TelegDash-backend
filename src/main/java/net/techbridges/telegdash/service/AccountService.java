@@ -1,7 +1,6 @@
 package net.techbridges.telegdash.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
@@ -24,6 +23,7 @@ import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionReq
 import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import net.techbridges.telegdash.repository.AccountRepository;
+import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -51,7 +51,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
-    private final PlanService planService;
+    private final PlanRepository planRepository;
     private final PaymentController paymentController;
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -62,7 +62,7 @@ public class AccountService {
     public AccountRegisterResponse register(AccountRegisterRequest account) throws Exception{
         String email = account.email();
         if (accountRepository.findByEmail(email).isEmpty()) {
-            Plan usedPlan = planService.getPlan(account.planId());
+            Plan usedPlan = planRepository.findById(account.planId()).get();
             Account toSave = accountToRegister(account);
             if (usedPlan.getIsActive()) {
 
@@ -100,12 +100,12 @@ public class AccountService {
                 .email(email)
                 .role(Role.OWNER)
                 .password(passwordEncoder.encode(account.password()))
-                .plan(planService.getPlan(account.planId()))
+                .plan(planRepository.findById(account.planId()).get())
                 .build());
     }
 
     public Subscription createSubscription(String username) throws Exception{
-        Plan usedPlan = planService.getPlan(accountRepository.findByEmail(username).get().getPlan().getPlanId());
+        Plan usedPlan = planRepository.findById(accountRepository.findByEmail(username).get().getPlan().getPlanId()).get();
         LocalDate currentDate = LocalDate.now().plusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = currentDate.format(formatter);
