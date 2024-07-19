@@ -1,8 +1,10 @@
 package net.techbridges.telegdash.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
+import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.dto.request.AddColumnChannel;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
@@ -17,12 +19,12 @@ import net.techbridges.telegdash.repository.ChannelRepository;
 import net.techbridges.telegdash.repository.ValueRepository;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
 import net.techbridges.telegdash.utils.InputChecker;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,6 +34,9 @@ public class ChannelService {
     private final AccountRepository accountRepository;
     private final AttributeRepository attributeRepository;
     private final ValueRepository valueRepository;
+    private final JwtService jwtService;
+    private final HttpServletRequest headers;
+
     @SubscriptionChecker
     public Integer checkAdminStatus(GroupType groupType, String channelId){
         try{
@@ -196,5 +201,17 @@ public class ChannelService {
                         channel.getAutoKickAfterDays()
                 )
         ).toList();
+    }
+    
+    public String createSession(String phoneNumber){
+        String token = headers.getHeader("Authorization").substring(7);
+        Account accountOwner = accountRepository.findByEmail(jwtService.extractUsername(token)).get();
+        accountOwner.setPhoneNumber(phoneNumber);
+        accountRepository.save(accountOwner);
+        return telegDashPyApiController.createSession(phoneNumber);
+    }
+
+    public String submitCode(String phoneNumber, String code) {
+        return telegDashPyApiController.submitCode(phoneNumber, code);
     }
 }

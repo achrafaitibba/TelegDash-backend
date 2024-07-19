@@ -46,8 +46,11 @@ public class AdminService {
         return responseEntity.getBody();
     }
 
-    public String sendMessageToUsers(RestTemplate restTemplate, String phoneNumber, Object[] users, String message){
+    public String sendMessageToUsers(RestTemplate restTemplate, String phoneNumber, Long[] users, String message){
         HashMap<String, Object> requestBody = new HashMap<>();
+        for(Object user: users){
+            System.out.println("User id: " + user.toString());
+        }
         requestBody.put("phone_number", phoneNumber);
         requestBody.put("usernames", users);
         requestBody.put("message", message);

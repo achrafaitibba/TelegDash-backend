@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
-import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
 import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
 import net.techbridges.telegdash.dto.request.ValueUpdateRequest;
 import net.techbridges.telegdash.dto.response.MemberResponse;
@@ -16,13 +15,12 @@ import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -239,6 +237,7 @@ public class MemberService {
         }
     }
 
+    //todo, test subscription not paid yet
     @SubscriptionChecker
     private boolean isAutoKickAuthorized(Channel channel) {
         String accountOwner = channel.getChannelAdmin().getUsername();
@@ -246,6 +245,49 @@ public class MemberService {
         return plan.getAutoKickingMember();
     }
 
+    //1 per week
+    @Scheduled(fixedRateString = "604800000")
+    public void scheduleUsersReminder() {
+        log.info("scheduled Users Reminder started at {}", LocalDateTime.now());
+        for(Channel channel : channelsWithReminderEnabled()) {
+            telegDashPyApiController.sendMessageToUsers(
+                    channel.getChannelAdmin().getPhoneNumber(),
+                    expiredMembersTelegramIDs(channel),
+                    "Your subscription for :"+channel.getName()+" is expiring soon, to avoid being removed of the channel, renew your subscription."
+                    );
+        }
+    }
 
+    private Long[] expiredMembersTelegramIDs(Channel channel) {
+        List<Member> membersByChannel = memberRepository.findAllByChannelChannelId(channel.getChannelId());
+        List<Long> expiredMembers = new ArrayList<>();
+        for (Member member : membersByChannel) {
+            log.info("Checking if member " + member.getMemberId() + " is expired");
+            if (isExpired(member.getMemberId(), channel.getAutoKickAfterDays()) && member.getMemberStatus() != MemberStatus.KICKED) {
+                expiredMembers.add(Long.valueOf(member.getTelegramMember().getTelegramMemberId()));
+                log.info("Member will be kicked {}::", member.getTelegramMember().getTelegramMemberId());
+            } else {
+                log.info("Won't be kicked " + member.getMemberId());
+            }
+        }
+        return expiredMembers.toArray(new Long[0]);
+    }
+
+    private List<Channel> channelsWithReminderEnabled() {
+        List<Account> accounts = accountRepository.findAll().stream().filter(
+                this::isReminderEnabled
+        ).toList();
+        List<Channel> channelsWithReminder = new ArrayList<>();
+        for(Account account : accounts) {
+            channelsWithReminder.addAll(channelRepository.findAllByChannelAdmin(account));
+        }
+        return channelsWithReminder;
+    }
+
+    @SubscriptionChecker
+    private boolean isReminderEnabled(Account account){
+        Plan plan = planRepository.findById(accountRepository.findByEmail(account.getEmail()).get().getPlan().getPlanId()).get();
+        return plan.getReminder();
+    }
 
 }

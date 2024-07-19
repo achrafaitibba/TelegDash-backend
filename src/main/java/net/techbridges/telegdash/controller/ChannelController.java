@@ -58,4 +58,15 @@ public class ChannelController {
         return ResponseEntity.ok().body(channelService.getAllByType(email, groupType));
     }
 
+    @GetMapping("/create-session/{phoneNumber}")
+    public ResponseEntity<String> createSession(@PathVariable String phoneNumber) {
+        System.out.println("we here hh");
+        return ResponseEntity.ok().body(channelService.createSession(phoneNumber));
+    }
+
+    @GetMapping("/submit-code/{phoneNumber}/{code}")
+    public ResponseEntity<String> createSession(@PathVariable String phoneNumber, @PathVariable String code) {
+        return ResponseEntity.ok().body(channelService.submitCode(phoneNumber, code));
+    }
+
 }

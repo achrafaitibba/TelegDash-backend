@@ -15,10 +15,9 @@ public class TelegDashApplication{
     //todo, members count for plans should ignore kicked accounts !
     //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
-
-
     //todo, scheduled admin reminder : sendMessageToAdmin
-    //todo, sendMessageToUsers (create session, get code and submit it)
+
+
     //todo, pagination
     //todo, test embeddable plans
     //todo, sync with DB should be limited, to avoid provoking DB, make it once a day or something

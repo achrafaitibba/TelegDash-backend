@@ -44,7 +44,7 @@ public class TelegDashPyApiController {
     public String submitCode( String phoneNumber, String code) {
         return adminService.submitCode(restTemplate, phoneNumber, code);
     }
-    public String sendMessageToUsers(String phoneNumber, Object[] users, String message){
+    public String sendMessageToUsers(String phoneNumber, Long[] users, String message){
         return adminService.sendMessageToUsers(restTemplate, phoneNumber, users, message);
     }
     /**

@@ -25,6 +25,7 @@ public class Account implements UserDetails {
     @Id
     private String email;
     private String password;
+    private String phoneNumber;
     @Enumerated(EnumType.STRING)
     private Role role;
     private LocalDateTime createdAt;
