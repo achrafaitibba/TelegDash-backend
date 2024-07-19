@@ -190,7 +190,8 @@ public class MemberService {
     }
 
 
-    @Scheduled(fixedRateString = "604800000")
+    //every 2 weeks
+    @Scheduled(fixedRateString = "1208000000")
     public void scheduleAutoKicking() {
         log.info("Schedule autokicking expired subscriptions started at {}", LocalDate.now());
         for (Channel channel : channelWithAutoKickEnabled()) {
@@ -244,5 +245,7 @@ public class MemberService {
         Plan plan = planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get();
         return plan.getAutoKickingMember();
     }
+
+
 
 }

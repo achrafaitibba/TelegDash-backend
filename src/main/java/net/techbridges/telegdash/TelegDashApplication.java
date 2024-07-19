@@ -17,10 +17,10 @@ public class TelegDashApplication{
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
 
 
-    //todo, test embeddable plans
-    //todo, sendMessageToUsers (create session, get code and submit it)
     //todo, scheduled admin reminder : sendMessageToAdmin
+    //todo, sendMessageToUsers (create session, get code and submit it)
     //todo, pagination
+    //todo, test embeddable plans
     //todo, sync with DB should be limited, to avoid provoking DB, make it once a day or something
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
