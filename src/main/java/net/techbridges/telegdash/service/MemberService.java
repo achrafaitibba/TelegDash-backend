@@ -89,27 +89,30 @@ public class MemberService {
     }
 
     private void synchronizeDatabase(String channelId) {
-        setStatusExpired(channelId);
-        List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
-        Channel channel = channelRepository.findById(channelId).get();
-        for (TelegramMember telegramMember : telegramMembers) {
-            Optional<Member> currentMember = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(telegramMember.getTelegramMemberId(), channelId);
-            if (currentMember.isEmpty()) {
-                telegramMemberRepository.save(telegramMember);
-                memberRepository.save(
-                        Member.builder()
-                                .channel(channel)
-                                .telegramMember(telegramMember)
-                                .memberStatus(MemberStatus.ACTIVE)
-                                .build()
-                );
-            }else if (!currentMember.get().getMemberStatus().equals(MemberStatus.EXPIRED)){
-                currentMember.get().setMemberStatus(MemberStatus.ACTIVE);
-                memberRepository.save(currentMember.get());
+        if(isChannelMembersCreditAvailable(channelId, telegDashPyApiController.getMembersCount(channelId))){
+            setStatusExpired(channelId);
+            List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
+            Channel channel = channelRepository.findById(channelId).get();
+            for (TelegramMember telegramMember : telegramMembers) {
+                Optional<Member> currentMember = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(telegramMember.getTelegramMemberId(), channelId);
+                if (currentMember.isEmpty()) {
+                    telegramMemberRepository.save(telegramMember);
+                    memberRepository.save(
+                            Member.builder()
+                                    .channel(channel)
+                                    .telegramMember(telegramMember)
+                                    .memberStatus(MemberStatus.ACTIVE)
+                                    .build()
+                    );
+                }else if (!currentMember.get().getMemberStatus().equals(MemberStatus.EXPIRED)){
+                    currentMember.get().setMemberStatus(MemberStatus.ACTIVE);
+                    memberRepository.save(currentMember.get());
+                }
             }
+            channel.setLastSync(LocalDateTime.now());
+            channel.setMembersCount(Long.valueOf(telegDashPyApiController.getMembersCount(channelId)));
+            channelRepository.save(channel);
         }
-        channel.setLastSync(LocalDateTime.now());
-        channelRepository.save(channel);
     }
 
     private List<TelegramMember> getAllTelegramMembers(String channelId, Long limit) {
@@ -311,4 +314,21 @@ public class MemberService {
         return plan.getReminder();
     }
 
+    private boolean isChannelMembersCreditAvailable(String channelId, long channelMembersCount){
+        Optional<Channel> toCheck = channelRepository.findById(channelId);
+        Account account = toCheck.get().getChannelAdmin();
+        Plan chosenPlan = account.getPlan();
+        List<Channel> channelsByAccount = channelRepository.findAllByChannelAdmin(account);
+        long membersCountOfChannels = channelMembersCount;
+        for(Channel channel : channelsByAccount){
+            membersCountOfChannels += channel.getMembersCount();
+        }
+        System.out.println("membersCountOfChannels"  + membersCountOfChannels);
+        membersCountOfChannels -= toCheck.get().getMembersCount();
+        System.out.println("membersCountOfChannels reduced" + membersCountOfChannels);
+        if(membersCountOfChannels > chosenPlan.getMembers()){
+            throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.FORBIDDEN);
+        }
+        return true;
+    }
 }
