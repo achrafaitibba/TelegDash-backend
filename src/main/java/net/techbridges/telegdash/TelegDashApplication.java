@@ -18,7 +18,6 @@ public class TelegDashApplication{
     //todo, scheduled admin reminder : sendMessageToAdmin
     //todo, inform admin that reminders has been sent to expired members
 
-    //todo, start data + (billing frequency * billingPeriod)
     //todo, save emails from subscription details after being subscribed
     //todo, refresh token mechanism
     //todo, limit origins to our website only

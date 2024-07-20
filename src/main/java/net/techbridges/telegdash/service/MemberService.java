@@ -137,7 +137,7 @@ public class MemberService {
         toUpdate.get().setBillingFrequency(BillingFrequency.valueOf(member.billingFrequency()));
         toUpdate.get().setBillingPeriod(member.billingPeriod());
         toUpdate.get().setStartDate(member.startDate());
-        toUpdate.get().setEndDate(member.endDate());
+        toUpdate.get().setEndDate(calculateEndDate(toUpdate.get()));
         if (isColumnCreditAvailable()) {
             List<Value> values = valueRepository.findAllByMemberMemberId(member.memberId());
             if (!values.isEmpty()) {
@@ -330,5 +330,27 @@ public class MemberService {
             throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.FORBIDDEN);
         }
         return true;
+    }
+
+    private LocalDate calculateEndDate(Member member) {
+        LocalDate startDate = member.getStartDate();
+        BillingFrequency billingFrequency = member.getBillingFrequency();
+        int billingPeriod = member.getBillingPeriod();
+        LocalDate endDate = null;
+        switch (billingFrequency) {
+            case DAY:
+                endDate = startDate.plusDays(billingPeriod);
+                break;
+            case WEEK:
+                endDate = startDate.plusWeeks(billingPeriod);
+                break;
+            case MONTH:
+                endDate = startDate.plusMonths(billingPeriod);
+                break;
+            case YEAR:
+                endDate = startDate.plusYears(billingPeriod);
+                break;
+        }
+        return endDate;
     }
 }
