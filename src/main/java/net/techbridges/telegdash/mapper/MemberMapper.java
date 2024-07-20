@@ -32,6 +32,7 @@ public class MemberMapper {
         );
     }
 
+    //todo, avoid using repos, only the mapping allowed on this class mapper, data flow
     public CustomColumnMemberResponse toCustomColumnMemberResponse(Member member) {
         List<Value> valueList = valueRepository.findAllByMemberMemberId(member.getMemberId());
         return new CustomColumnMemberResponse(

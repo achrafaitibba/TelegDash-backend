@@ -1,5 +1,6 @@
 package net.techbridges.telegdash.dto.response;
 
+import net.techbridges.telegdash.model.Attribute;
 import net.techbridges.telegdash.model.enums.Niche;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public record ChannelResponse(
         String description,
         Long membersCount,
         boolean autoKick,
-        int autoKickAfterDays
+        int autoKickAfterDays,
+        List<AttributeResponse> customColumn
+
 ) {
 }

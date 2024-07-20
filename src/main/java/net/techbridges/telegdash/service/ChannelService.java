@@ -11,13 +11,14 @@ import net.techbridges.telegdash.dto.request.ChannelUpdateRequest;
 import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
+import net.techbridges.telegdash.mapper.AttributeMapper;
+import net.techbridges.telegdash.mapper.ValueMapper;
 import net.techbridges.telegdash.model.*;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
 import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
 import net.techbridges.telegdash.utils.InputChecker;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class ChannelService {
     private final JwtService jwtService;
     private final HttpServletRequest headers;
     private final MemberRepository memberRepository;
+    private final AttributeMapper attributeMapper;
 
     @SubscriptionChecker
     public Integer checkAdminStatus(GroupType groupType, String channelId){
@@ -71,6 +73,7 @@ public class ChannelService {
                             .build()
             );
         }
+
         return new ChannelResponse(
                 savedChannel.getChannelId(),
                 savedChannel.getName(),
@@ -78,7 +81,8 @@ public class ChannelService {
                 savedChannel.getDescription(),
                 savedChannel.getMembersCount(),
                 savedChannel.getAutoKick(),
-                savedChannel.getAutoKickAfterDays()
+                savedChannel.getAutoKickAfterDays(),
+                attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(channelID))
         );
     }
 
@@ -131,7 +135,9 @@ public class ChannelService {
                 toUpdate.getDescription(),
                 toUpdate.getMembersCount(),
                 toUpdate.getAutoKick(),
-                toUpdate.getAutoKickAfterDays()
+                toUpdate.getAutoKickAfterDays(),
+                attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(toUpdate.getChannelId()))
+
         );
     }
 
@@ -161,7 +167,8 @@ public class ChannelService {
                 channel.getDescription(),
                 channel.getMembersCount(),
                 channel.getAutoKick(),
-                channel.getAutoKickAfterDays()
+                channel.getAutoKickAfterDays(),
+                attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(channel.getChannelId()))
         );    }
 
     @SubscriptionChecker
@@ -183,7 +190,8 @@ public class ChannelService {
                 channel.getDescription(),
                 channel.getMembersCount(),
                 channel.getAutoKick(),
-                channel.getAutoKickAfterDays()
+                channel.getAutoKickAfterDays(),
+                attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(channel.getChannelId()))
         );
     }
 
@@ -197,7 +205,8 @@ public class ChannelService {
                         channel.getDescription(),
                         channel.getMembersCount(),
                         channel.getAutoKick(),
-                        channel.getAutoKickAfterDays()
+                        channel.getAutoKickAfterDays(),
+                        attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(channel.getChannelId()))
                 )
         ).toList();
     }
@@ -237,7 +246,8 @@ public class ChannelService {
                 channel.get().getDescription(),
                 channel.get().getMembersCount(),
                 channel.get().getAutoKick(),
-                channel.get().getAutoKickAfterDays()
+                channel.get().getAutoKickAfterDays(),
+                attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(channel.get().getChannelId()))
         );
     }
 
@@ -254,7 +264,8 @@ public class ChannelService {
                 channel.get().getDescription(),
                 channel.get().getMembersCount(),
                 channel.get().getAutoKick(),
-                channel.get().getAutoKickAfterDays()
+                channel.get().getAutoKickAfterDays(),
+                attributeMapper.toAttributeResponse(attributeRepository.findAllByChannelChannelId(channel.get().getChannelId()))
         );
     }
 
