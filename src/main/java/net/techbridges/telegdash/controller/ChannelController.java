@@ -79,4 +79,9 @@ public class ChannelController {
     public ResponseEntity<ChannelResponse> getChannelInfos(@PathVariable String channelId){
         return ResponseEntity.ok().body(channelService.getChannelInfos(channelId));
     }
+
+    @DeleteMapping("/{channelId}")
+    public ResponseEntity<String> deleteChannel(@PathVariable String channelId){
+        return ResponseEntity.ok().body(channelService.deleteChannel(channelId));
+    }
 }

@@ -14,10 +14,7 @@ import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.*;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
-import net.techbridges.telegdash.repository.AccountRepository;
-import net.techbridges.telegdash.repository.AttributeRepository;
-import net.techbridges.telegdash.repository.ChannelRepository;
-import net.techbridges.telegdash.repository.ValueRepository;
+import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +34,7 @@ public class ChannelService {
     private final ValueRepository valueRepository;
     private final JwtService jwtService;
     private final HttpServletRequest headers;
+    private final MemberRepository memberRepository;
 
     @SubscriptionChecker
     public Integer checkAdminStatus(GroupType groupType, String channelId){
@@ -258,5 +256,19 @@ public class ChannelService {
                 channel.get().getAutoKick(),
                 channel.get().getAutoKickAfterDays()
         );
+    }
+
+    //todo, delete columns, values, attributes, members
+    public String deleteChannel(String channelId) {
+        List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
+        List<Attribute> attributes = attributeRepository.findAllByChannelChannelId(channelId);
+        for(Attribute attribute : attributes){
+            valueRepository.deleteAll(valueRepository.findAllByAttribute(attribute));
+            attributeRepository.delete(attribute);
+        }
+        memberRepository.deleteAll(members);
+        channelRepository.deleteById(channelId);
+        return "Channel deleted successfully";
+
     }
 }

@@ -16,11 +16,10 @@ public class TelegDashApplication{
     //todo, make bot auto-join groups via link, if possible, otherwise, auto add it
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
     //todo, scheduled admin reminder : sendMessageToAdmin
-
-
     //todo, inform admin that reminders has been sent to expired members
+
+
     //todo, update email
-    //todo, delete channel 'reset plan credit like members count...'
     //todo, test embeddable plans
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
