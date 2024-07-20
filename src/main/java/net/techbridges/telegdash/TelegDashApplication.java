@@ -18,12 +18,11 @@ public class TelegDashApplication{
     //todo, scheduled admin reminder : sendMessageToAdmin
     //todo, inform admin that reminders has been sent to expired members
 
-
-    //todo, update email
-    //todo, test embeddable plans
+    //todo, start data + (billing frequency * billingPeriod)
     //todo, save emails from subscription details after being subscribed
-    //todo, limit origins to our website only
     //todo, refresh token mechanism
+    //todo, limit origins to our website only
+    //todo, test embeddable plans
 
     //todo, lifetime subs for clients, not visitors
     //todo, free accounts like doc, should have a limited access (eg. six months)

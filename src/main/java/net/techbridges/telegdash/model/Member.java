@@ -30,5 +30,5 @@ public class Member {
     private BillingFrequency billingFrequency;
     private Integer billingPeriod;
     private LocalDate startDate;
-    private LocalDate endDate; // todo, start data + (billing frequency * billingPeriod)
+    private LocalDate endDate;
 }

@@ -269,7 +269,6 @@ public class ChannelService {
         );
     }
 
-    //todo, delete columns, values, attributes, members
     public String deleteChannel(String channelId) {
         List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
         List<Attribute> attributes = attributeRepository.findAllByChannelChannelId(channelId);
