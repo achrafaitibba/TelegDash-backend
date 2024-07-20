@@ -20,7 +20,6 @@ public class TelegDashApplication{
 
     //todo, pagination
     //todo, test embeddable plans
-    //todo, sync with DB should be limited, to avoid provoking DB, make it once a day or something
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
     //todo, update channel

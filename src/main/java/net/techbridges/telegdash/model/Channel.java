@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -31,5 +32,6 @@ public class Channel {
     private Account channelAdmin;
     private Boolean autoKick;
     private Integer autoKickAfterDays;
+    private LocalDateTime lastSync;
 
 }

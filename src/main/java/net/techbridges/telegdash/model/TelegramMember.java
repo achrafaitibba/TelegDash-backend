@@ -18,7 +18,6 @@ public class TelegramMember {
     @Column(unique=true)
     private String telegramMemberId;
     private String username;
-    //todo, firstName + lastName should be hidden in the members table, optional
     private String firstName;
     private String lastName;
 }

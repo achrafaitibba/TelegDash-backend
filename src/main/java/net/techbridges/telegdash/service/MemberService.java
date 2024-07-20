@@ -43,10 +43,11 @@ public class MemberService {
 
     @SubscriptionChecker
     public List<Object> getAllMembers(String channelId, Boolean sync) {
-        if (channelRepository.findById(channelId).isEmpty()) {
+        Optional<Channel> channel = channelRepository.findById(channelId);
+        if (channel.isEmpty()) {
             throw new RequestException("Channel doesn't exist", HttpStatus.NOT_FOUND);
         }
-        if (sync) {
+        if (sync && isSyncAuthorized(channel.get())) {
             synchronizeDatabase(channelId);
             return getAllSavedMembers(channelId);
         } else {
@@ -54,19 +55,31 @@ public class MemberService {
         }
     }
 
+    private boolean isSyncAuthorized(Channel channel){
+        LocalDateTime lastSync = channel.getLastSync();
+        if(lastSync == null) {
+            log.info("Is authorized to sync: {}", true);
+            return true;
+        }else {
+            boolean result = lastSync.plusHours(24).isBefore(LocalDateTime.now());
+            log.info("Last sync time is {}", lastSync);
+            log.info("Is authorized to sync: {}", result);
+            return result;
+        }
+    }
+
     private List<Object> getAllSavedMembers(String channelId) {
-        List<Object> memberResponses = new ArrayList<>();
+        List<Object> members = new ArrayList<>();
         for (Member member : memberRepository.findAllByChannelChannelId(channelId)) {
             MemberResponse memberResponse =
                     memberMapper.toResponse(member);
             if (isColumnCreditAvailable()) {
-                memberResponses.add(memberMapper.toCustomColumnMemberResponse(member));
-
+                members.add(memberMapper.toCustomColumnMemberResponse(member));
             } else {
-                memberResponses.add(memberResponse);
+                members.add(memberResponse);
             }
         }
-        return memberResponses;
+        return members;
     }
 
     private void synchronizeDatabase(String channelId) {
@@ -89,6 +102,8 @@ public class MemberService {
                 memberRepository.save(currentMember.get());
             }
         }
+        channel.setLastSync(LocalDateTime.now());
+        channelRepository.save(channel);
     }
 
     private List<TelegramMember> getAllTelegramMembers(String channelId, Long limit) {
