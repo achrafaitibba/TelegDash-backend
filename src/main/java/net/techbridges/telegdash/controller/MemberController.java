@@ -5,6 +5,7 @@ import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.service.MemberService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,9 +27,12 @@ public class MemberController {
         return ResponseEntity.ok().body(BillingFrequency.values());
     }
 
-    @GetMapping("/{channelId}/{sync}")
-    public ResponseEntity<List<Object>> getAllMembers(@PathVariable("channelId") String channelId, @PathVariable("sync") Boolean sync) {
-        return ResponseEntity.ok().body(memberService.getAllMembers(channelId, sync));
+    @GetMapping("/{channelId}/{sync}/{page}/{size}")
+    public ResponseEntity<List<Object>> getAllMembers(@PathVariable("channelId") String channelId,
+                                                      @PathVariable("sync") Boolean sync,
+                                                      @PathVariable Integer page,
+                                                      @PathVariable Integer size) {
+        return ResponseEntity.ok().body(memberService.getAllMembers(channelId, sync, page, size));
     }
 
     @PostMapping("/update")

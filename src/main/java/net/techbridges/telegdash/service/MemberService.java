@@ -15,6 +15,9 @@ import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.repository.*;
 import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.TelegDashPyApiController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -42,16 +46,16 @@ public class MemberService {
     private final MemberMapper memberMapper;
 
     @SubscriptionChecker
-    public List<Object> getAllMembers(String channelId, Boolean sync) {
+    public List<Object> getAllMembers(String channelId, Boolean sync, Integer page, Integer size) {
         Optional<Channel> channel = channelRepository.findById(channelId);
         if (channel.isEmpty()) {
             throw new RequestException("Channel doesn't exist", HttpStatus.NOT_FOUND);
         }
         if (sync && isSyncAuthorized(channel.get())) {
             synchronizeDatabase(channelId);
-            return getAllSavedMembers(channelId);
+            return getAllSavedMembers(channelId, page, size);
         } else {
-            return getAllSavedMembers(channelId);
+            return getAllSavedMembers(channelId, page, size);
         }
     }
 
@@ -68,9 +72,11 @@ public class MemberService {
         }
     }
 
-    private List<Object> getAllSavedMembers(String channelId) {
+    private List<Object> getAllSavedMembers(String channelId, Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
         List<Object> members = new ArrayList<>();
-        for (Member member : memberRepository.findAllByChannelChannelId(channelId)) {
+        Page<Member> memberPage = memberRepository.findAllByChannelChannelId(channelId, pageable);
+        for (Member member : memberPage) {
             MemberResponse memberResponse =
                     memberMapper.toResponse(member);
             if (isColumnCreditAvailable()) {

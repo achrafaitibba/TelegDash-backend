@@ -18,7 +18,6 @@ public class TelegDashApplication{
     //todo, scheduled admin reminder : sendMessageToAdmin
 
 
-    //todo, pagination
     //todo, test embeddable plans
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
