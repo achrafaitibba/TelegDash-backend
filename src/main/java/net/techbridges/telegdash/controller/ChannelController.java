@@ -3,6 +3,7 @@ package net.techbridges.telegdash.controller;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.dto.request.AddColumnChannel;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
+import net.techbridges.telegdash.dto.request.ChannelUpdateRequest;
 import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.model.enums.GroupType;
@@ -69,4 +70,13 @@ public class ChannelController {
         return ResponseEntity.ok().body(channelService.submitCode(phoneNumber, code));
     }
 
+    @PostMapping("/{channelId}")
+    public ResponseEntity<ChannelResponse> updateChannel(@RequestBody ChannelUpdateRequest request, @PathVariable String channelId){
+        return ResponseEntity.ok().body(channelService.updateChannel(request, channelId));
+    }
+
+    @GetMapping("/{channelId}")
+    public ResponseEntity<ChannelResponse> getChannelInfos(@PathVariable String channelId){
+        return ResponseEntity.ok().body(channelService.getChannelInfos(channelId));
+    }
 }

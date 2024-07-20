@@ -7,6 +7,7 @@ import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.dto.request.AddColumnChannel;
 import net.techbridges.telegdash.dto.request.ChannelCreateRequest;
+import net.techbridges.telegdash.dto.request.ChannelUpdateRequest;
 import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
@@ -213,5 +214,49 @@ public class ChannelService {
 
     public String submitCode(String phoneNumber, String code) {
         return telegDashPyApiController.submitCode(phoneNumber, code);
+    }
+
+    public ChannelResponse updateChannel(ChannelUpdateRequest request, String channelId) {
+        Optional<Channel> channel = channelRepository.findById(channelId);
+        if(channel.isPresent()){
+            channel.get().setName(request.name());
+            channel.get().setNiches(
+                    request.niches().stream().map(
+                            Niche::valueOf
+                    ).toList()
+            );
+            channel.get().setDescription(request.description());
+            channel.get().setAutoKick(request.autoKick());
+            channel.get().setAutoKickAfterDays(request.autoKickAfterDays());
+            channelRepository.save(channel.get());
+        } else {
+            throw new RequestException("The channel id provided doesn't exist", HttpStatus.NOT_FOUND);
+        }
+        return new ChannelResponse(
+                channel.get().getChannelId(),
+                channel.get().getName(),
+                channel.get().getNiches(),
+                channel.get().getDescription(),
+                channel.get().getMembersCount(),
+                channel.get().getAutoKick(),
+                channel.get().getAutoKickAfterDays()
+        );
+    }
+
+
+    public ChannelResponse getChannelInfos(String channelId) {
+        Optional<Channel> channel = channelRepository.findById(channelId);
+        if(channel.isEmpty()){
+            throw new RequestException("The channel id provided doesn't exist", HttpStatus.NOT_FOUND);
+        }
+        return new ChannelResponse(
+                channel.get().getChannelId(),
+                channel.get().getName(),
+                channel.get().getNiches(),
+                channel.get().getDescription(),
+                channel.get().getMembersCount(),
+                channel.get().getAutoKick(),
+                channel.get().getAutoKickAfterDays()
+        );
     }
 }

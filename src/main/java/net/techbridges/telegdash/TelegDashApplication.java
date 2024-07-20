@@ -18,8 +18,9 @@ public class TelegDashApplication{
     //todo, scheduled admin reminder : sendMessageToAdmin
 
 
-    //todo, update channel
+    //todo, inform admin that reminders has been sent to expired members
     //todo, update email
+    //todo, delete channel 'reset plan credit like members count...'
     //todo, test embeddable plans
     //todo, save emails from subscription details after being subscribed
     //todo, limit origins to our website only
@@ -28,7 +29,6 @@ public class TelegDashApplication{
     //todo, lifetime subs for clients, not visitors
     //todo, free accounts like doc, should have a limited access (eg. six months)
     //todo, confirm email endpoint
-    //todo, backup on aws ? or my server?
     //todo, store sessions somewhere as a backup
     //todo, email verification
     //todo, fix links in email templates
