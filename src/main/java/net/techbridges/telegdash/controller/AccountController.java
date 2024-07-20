@@ -30,8 +30,8 @@ public class AccountController {
     }
 
     @PostMapping("/authenticate")
-    public AccountAuthResponse authenticate(@RequestBody AccountAuthRequest account){
-        return accountService.authenticate(account);
+    public ResponseEntity<AccountAuthResponse> authenticate(@RequestBody AccountAuthRequest account){
+        return ResponseEntity.ok().body(accountService.authenticate(account));
     }
 
     @PostMapping("/refresh-token")
