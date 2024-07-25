@@ -4,17 +4,14 @@ package net.techbridges.telegdash.paymentService.paypal.service;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionRequest;
+import net.techbridges.telegdash.paymentService.paypal.dto.PlanRequest;
 import net.techbridges.telegdash.paymentService.paypal.dto.ReviseSubscriptionRequest;
-import net.techbridges.telegdash.paymentService.paypal.model.BaseUrl;
-import net.techbridges.telegdash.paymentService.paypal.model.Link;
-import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
+import net.techbridges.telegdash.paymentService.paypal.model.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -93,4 +90,59 @@ public class SubscriptionService {
     private Boolean isSubscriptionActive(String subscriptionId) throws Exception {
         return getSubscription(subscriptionId).getStatus().toString().equals("ACTIVE");
     }
+
+    public Product createProduct(String productName) throws Exception{
+        requestHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.add("Prefer", "return=representation");
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("name", productName);
+        requestBody.put("type", "DIGITAL");
+        requestBody.put("category", "SOFTWARE");
+        requestBody.put("home_url","https://telegdash.com");
+        requestBody.put("description", "test product description");
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+        ResponseEntity<Product> response = restTemplate.exchange(
+                baseUrl.getBaseUrl() + "v1/catalogs/products",
+                HttpMethod.POST,
+                requestEntity,
+                Product.class
+        );
+        return response.getBody();
+    }
+
+    public PaypalPlan createPlan(PlanRequest request) throws Exception {
+        requestHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.add("Prefer", "return=representation");
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("product_id", request.productId());
+        requestBody.put("name", request.planName());
+        List<BillingCycle> billingCycles = new ArrayList<>();
+        BillingCycle billingCycle = new BillingCycle();
+        PricingScheme pricingScheme = new PricingScheme();
+        FixedPrice fixedPrice = new FixedPrice();
+        fixedPrice.setCurrencyCode("USD");
+        fixedPrice.setValue(String.valueOf(request.price()));
+        pricingScheme.setFixedPrice(fixedPrice);
+        Frequency frequency  = new Frequency();
+        frequency.setIntervalCount(request.intervalCount());
+        frequency.setIntervalUnit(request.intervalUnit());
+        billingCycle.setFrequency(frequency);
+        billingCycle.setTenureType(request.planType());
+        billingCycle.setSequence(request.sequence());
+        billingCycle.setPricingScheme(pricingScheme);
+        billingCycles.add(billingCycle);
+        requestBody.put("billing_cycles", billingCycles);
+        requestBody.put("payment_preferences", new HashMap<>());
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+        ResponseEntity<PaypalPlan> response = restTemplate.exchange(
+                baseUrl.getBaseUrl() + "v1/billing/plans",
+                HttpMethod.POST,
+                requestEntity,
+                PaypalPlan.class
+        );
+        return response.getBody();
+    }
+
 }
