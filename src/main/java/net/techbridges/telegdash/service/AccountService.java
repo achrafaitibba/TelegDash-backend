@@ -60,7 +60,7 @@ public class AccountService {
 
     @Transactional
     public AccountRegisterResponse register(AccountRegisterRequest account) throws Exception{
-        String email = account.email();
+        String email = InputChecker.normalizeEmail(account.email());
         if (accountRepository.findByEmail(email).isEmpty()) {
             Plan usedPlan = planRepository.findById(account.planId()).get();
             Account toSave = accountToRegister(account);
