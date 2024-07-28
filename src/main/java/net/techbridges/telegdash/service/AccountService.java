@@ -191,7 +191,7 @@ public class AccountService {
         UserDetails userDetails = userDetailsService.loadUserByUsername(account.get().getUsername());
         var jwtToken = jwtService.generateRecoverPasswordToken(userDetails);
         saveUserToken(Account.builder().email(email).password(account.get().getPassword()).build(), jwtToken);
-        return origin.concat("/auth/reset/".concat(jwtToken));
+        return origin.concat("/recover-password/".concat(jwtToken));
     }
 
 
