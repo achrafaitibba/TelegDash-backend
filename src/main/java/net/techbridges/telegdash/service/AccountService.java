@@ -15,6 +15,7 @@ import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.model.Account;
+import net.techbridges.telegdash.model.Feedback;
 import net.techbridges.telegdash.model.Plan;
 import net.techbridges.telegdash.model.enums.Role;
 import net.techbridges.telegdash.model.enums.SubscriptionType;
@@ -23,6 +24,7 @@ import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionReq
 import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import net.techbridges.telegdash.repository.AccountRepository;
+import net.techbridges.telegdash.repository.FeedbackRepository;
 import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +57,7 @@ public class AccountService {
     private final PaymentController paymentController;
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final FeedbackRepository feedbackRepository;
     @Value("${app.security.allowed.origin}")
     private String origin;
 
@@ -203,6 +206,10 @@ public class AccountService {
         var refreshToken = jwtService.generateRefreshToken(account);
         saveUserToken(Account.builder().email(email).password(account.getPassword()).build(), jwtToken);
         return new AccountAuthResponse(email, jwtToken, refreshToken);
+    }
+
+    public Feedback saveFeedback(Feedback feedback) {
+        return feedbackRepository.save(feedback);
     }
 
 }

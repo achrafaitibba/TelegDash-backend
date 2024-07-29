@@ -42,6 +42,7 @@ public class SecurityConfigurationFilter {
                         "/api/v1.0/channels/status/**",
                         "/api/v1.0/accounts/recover-password-url/**",
                         "/api/v1.0/accounts/test",
+                        "/api/v1.0/accounts/feedback",
                         "swagger-ui/index.html",
                         "/swagger-ui/index.html#",
                         "/v2/api-docs",

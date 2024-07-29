@@ -8,6 +8,7 @@ import net.techbridges.telegdash.dto.request.AccountAuthRequest;
 import net.techbridges.telegdash.dto.request.AccountRegisterRequest;
 import net.techbridges.telegdash.dto.response.AccountAuthResponse;
 import net.techbridges.telegdash.dto.response.AccountRegisterResponse;
+import net.techbridges.telegdash.model.Feedback;
 import net.techbridges.telegdash.service.AccountService;
 import net.techbridges.telegdash.service.EmailService;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,11 @@ public class AccountController {
     @PostMapping("/reset-password")
     public ResponseEntity<AccountAuthResponse> recoverPassword(@RequestBody AccountAuthRequest request) {
         return ResponseEntity.ok().body(accountService.recoverPassword(request.email(), request.password()));
+    }
+
+    @PostMapping("/feedback")
+    public ResponseEntity<Feedback> feedback(@RequestBody Feedback request) {
+        return ResponseEntity.ok().body(accountService.saveFeedback(request));
     }
 
     @GetMapping("/test")

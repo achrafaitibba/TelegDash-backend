@@ -18,6 +18,9 @@ public class TelegDashApplication{
     //todo, scheduled admin reminder : sendMessageToAdmin
     //todo, inform admin that reminders has been sent to expired members
 
+    //todo, check token owner 'extract them' before updating password
+    //todo, cors origin for python api
+    //todo, get subscription url if user ignores paying at register phase
     //todo, add lifetime subscription type for members
     //todo, save emails from subscription details after being subscribed
     //todo, refresh token mechanism
