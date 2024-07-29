@@ -18,6 +18,8 @@ public class TelegDashApplication{
     //todo, scheduled admin reminder : sendMessageToAdmin
     //todo, inform admin that reminders has been sent to expired members
 
+
+    //todo, upgrade plan, use revise subscription method
     //todo, check token owner 'extract them' before updating password
     //todo, cors origin for python api
     //todo, get subscription url if user ignores paying at register phase
@@ -27,10 +29,10 @@ public class TelegDashApplication{
     //todo, limit origins to our website only
     //todo, test embeddable plans
 
+    //todo, send register email after registration
     //todo, lifetime subs for clients, not visitors
     //todo, free accounts like doc, should have a limited access (eg. six months)
     //todo, confirm email endpoint
     //todo, store sessions somewhere as a backup
     //todo, email verification
-    //todo, fix links in email templates
 }

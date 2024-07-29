@@ -30,7 +30,6 @@ public class PaymentController {
         return subscriptionService.approveSubscription(subscription);
     }
 
-    @PostMapping()
     public Object reviseSubscription(@RequestBody  ReviseSubscriptionRequest request) throws Exception {
         return subscriptionService.reviseSubscription(request);
     }

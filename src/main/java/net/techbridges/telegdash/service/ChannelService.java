@@ -51,6 +51,9 @@ public class ChannelService {
     @Transactional
     public ChannelResponse createChannel(ChannelCreateRequest channel){
         String channelID = InputChecker.channelUsernameBuilder(GroupType.valueOf(channel.groupType()), channel.channelId());
+        if(channelRepository.findById(channelID).isPresent()){
+            throw new RequestException("Channel already created, check your channels or discuss to other admins in your channel", HttpStatus.CONFLICT);
+        }
         long newChannelMembersCount = getMembersCountByChannel(channelID);
         Optional<Account> channelOwner = accountRepository.findByEmail(channel.channelOwnerMail());
         Channel savedChannel = new Channel();
