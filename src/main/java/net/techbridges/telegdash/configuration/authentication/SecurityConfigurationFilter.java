@@ -40,6 +40,7 @@ public class SecurityConfigurationFilter {
                         "/api/v1.0/accounts/authenticate",
                         "/api/v1.0/plans/**",
                         "/api/v1.0/channels/status/**",
+                        "/api/v1.0/channels/niches",
                         "/api/v1.0/accounts/recover-password-url/**",
                         "/api/v1.0/accounts/test",
                         "/api/v1.0/accounts/feedback",
