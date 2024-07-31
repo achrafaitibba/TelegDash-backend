@@ -19,6 +19,8 @@ public class TelegDashApplication{
     //todo, inform admin that reminders has been sent to expired members
 
 
+    //todo, JWT expired response
+    //todo, hide plan/mailing controller endpoints
     //todo, upgrade plan, use revise subscription method
     //todo, check token owner 'extract them' before updating password
     //todo, cors origin for python api
