@@ -2,6 +2,7 @@ package net.techbridges.telegdash.controller;
 
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
+import net.techbridges.telegdash.dto.response.CustomColumnMemberResponse;
 import net.techbridges.telegdash.model.enums.BillingFrequency;
 import net.techbridges.telegdash.model.enums.MemberStatus;
 import net.techbridges.telegdash.service.MemberService;
@@ -28,10 +29,10 @@ public class MemberController {
     }
 
     @GetMapping("/{channelId}/{sync}/{page}/{size}")
-    public ResponseEntity<List<Object>> getAllMembers(@PathVariable("channelId") String channelId,
-                                                      @PathVariable("sync") Boolean sync,
-                                                      @PathVariable Integer page,
-                                                      @PathVariable Integer size) {
+    public ResponseEntity<List<CustomColumnMemberResponse>> getAllMembers(@PathVariable("channelId") String channelId,
+                                                                          @PathVariable("sync") Boolean sync,
+                                                                          @PathVariable Integer page,
+                                                                          @PathVariable Integer size) {
         return ResponseEntity.ok().body(memberService.getAllMembers(channelId, sync, page, size));
     }
 

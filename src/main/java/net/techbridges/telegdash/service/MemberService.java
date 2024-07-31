@@ -7,7 +7,7 @@ import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.dto.request.MemberUpdateRequest;
 import net.techbridges.telegdash.dto.request.ValueUpdateRequest;
-import net.techbridges.telegdash.dto.response.MemberResponse;
+import net.techbridges.telegdash.dto.response.CustomColumnMemberResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.mapper.MemberMapper;
 import net.techbridges.telegdash.model.*;
@@ -46,14 +46,17 @@ public class MemberService {
     private final MemberMapper memberMapper;
 
     @SubscriptionChecker
-    public List<Object> getAllMembers(String channelId, Boolean sync, Integer page, Integer size) {
+    public List<CustomColumnMemberResponse> getAllMembers(String channelId, Boolean sync, Integer page, Integer size) {
         Optional<Channel> channel = channelRepository.findById(channelId);
         if (channel.isEmpty()) {
             throw new RequestException("Channel doesn't exist", HttpStatus.NOT_FOUND);
         }
+
         if (sync && isSyncAuthorized(channel.get())) {
             synchronizeDatabase(channelId);
             return getAllSavedMembers(channelId, page, size);
+        } else if (sync && !isSyncAuthorized(channel.get())) {
+            throw new RequestException("You're not authorized to synchronize more than 1 time every 24H", HttpStatus.FORBIDDEN);
         } else {
             return getAllSavedMembers(channelId, page, size);
         }
@@ -72,13 +75,13 @@ public class MemberService {
         }
     }
 
-    private List<Object> getAllSavedMembers(String channelId, Integer page, Integer size) {
+    private List<CustomColumnMemberResponse> getAllSavedMembers(String channelId, Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<Object> members = new ArrayList<>();
+        List<CustomColumnMemberResponse> members = new ArrayList<>();
         Page<Member> memberPage = memberRepository.findAllByChannelChannelId(channelId, pageable);
         for (Member member : memberPage) {
-            MemberResponse memberResponse =
-                    memberMapper.toResponse(member);
+            CustomColumnMemberResponse memberResponse =
+                    memberMapper.toCustomColumnMemberResponse(member);
             if (isColumnCreditAvailable()) {
                 members.add(memberMapper.toCustomColumnMemberResponse(member));
             } else {
@@ -137,7 +140,9 @@ public class MemberService {
         toUpdate.get().setBillingFrequency(BillingFrequency.valueOf(member.billingFrequency()));
         toUpdate.get().setBillingPeriod(member.billingPeriod());
         toUpdate.get().setStartDate(member.startDate());
-        toUpdate.get().setEndDate(calculateEndDate(toUpdate.get()));
+        if(toUpdate.get().getBillingPeriod() != null ){
+            toUpdate.get().setEndDate(calculateEndDate(toUpdate.get()));
+        }
         if (isColumnCreditAvailable()) {
             List<Value> values = valueRepository.findAllByMemberMemberId(member.memberId());
             if (!values.isEmpty()) {
