@@ -94,6 +94,11 @@ public class MemberService {
     private void synchronizeDatabase(String channelId) {
         if(isChannelMembersCreditAvailable(channelId, telegDashPyApiController.getMembersCount(channelId))){
             setStatusExpired(channelId);
+            List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
+            for (Member member : members) {
+                member.setMemberStatus(MemberStatus.KICKED);
+                memberRepository.save(member);
+            }
             List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
             Channel channel = channelRepository.findById(channelId).get();
             for (TelegramMember telegramMember : telegramMembers) {
