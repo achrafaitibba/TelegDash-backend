@@ -43,7 +43,7 @@ public class ChannelService {
         try{
             return telegDashPyApiController.checkAdminStatus(InputChecker.channelUsernameBuilder(groupType, channelId));
         }catch (Exception e){
-            throw new RequestException("Something is wrong with the provided ID, details : "  + e.getMessage(), HttpStatus.CONFLICT);
+            throw new RequestException("Something is wrong, details : "  + e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
