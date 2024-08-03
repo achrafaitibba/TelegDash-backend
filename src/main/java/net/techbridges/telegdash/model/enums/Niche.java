@@ -22,5 +22,5 @@ public enum Niche {
     SPORTS,
     TECHNOLOGY,
     TRADING,
-    UNDEFINED;
+    OTHER;
 }
