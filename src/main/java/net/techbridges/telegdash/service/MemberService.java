@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -142,10 +143,10 @@ public class MemberService {
         if (toUpdate.isEmpty()) {
             throw new RequestException("Member doesn't exist", HttpStatus.NOT_FOUND);
         }
-        toUpdate.get().setBillingFrequency(BillingFrequency.valueOf(member.billingFrequency()));
-        toUpdate.get().setBillingPeriod(member.billingPeriod());
-        toUpdate.get().setStartDate(member.startDate());
-        if(toUpdate.get().getBillingPeriod() != null ){
+        toUpdate.get().setBillingFrequency(Objects.equals(member.billingFrequency(), "") ? null : BillingFrequency.valueOf(member.billingFrequency()));
+        toUpdate.get().setBillingPeriod(member.billingPeriod() == null ? null : member.billingPeriod());
+        toUpdate.get().setStartDate(member.startDate() == null ? null : member.startDate());
+        if(toUpdate.get().getBillingPeriod() != null & toUpdate.get().getBillingFrequency() != null & toUpdate.get().getStartDate() != null){
             toUpdate.get().setEndDate(calculateEndDate(toUpdate.get()));
         }
         if (isColumnCreditAvailable()) {
