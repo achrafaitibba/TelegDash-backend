@@ -57,7 +57,7 @@ public class MemberService {
             synchronizeDatabase(channelId);
             return getAllSavedMembers(channelId, page, size);
         } else if (sync && !isSyncAuthorized(channel.get())) {
-            throw new RequestException("You're not authorized to synchronize more than 1 time every 24H", HttpStatus.FORBIDDEN);
+            throw new RequestException("You're not authorized to synchronize more than 1 time every 24H", HttpStatus.UNAUTHORIZED);
         } else {
             return getAllSavedMembers(channelId, page, size);
         }
@@ -338,7 +338,7 @@ public class MemberService {
         membersCountOfChannels -= toCheck.get().getMembersCount();
         System.out.println("membersCountOfChannels reduced" + membersCountOfChannels);
         if(membersCountOfChannels > chosenPlan.getMembers()){
-            throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.FORBIDDEN);
+            throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.UNAUTHORIZED);
         }
         return true;
     }

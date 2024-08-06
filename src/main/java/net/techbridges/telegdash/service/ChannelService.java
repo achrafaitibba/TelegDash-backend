@@ -102,7 +102,7 @@ public class ChannelService {
         Plan chosenPlan = account.getPlan();
         long channelsCount = getChannelCountByAccount(account.getUsername());
         if(channelsCount > chosenPlan.getChannels()){
-           throw new RequestException("You have reached the limit of channels, upgrade your plan", HttpStatus.FORBIDDEN);
+           throw new RequestException("You have reached the limit of channels, upgrade your plan", HttpStatus.UNAUTHORIZED);
         }
         List<Channel> channelsByAccount = channelRepository.findAllByChannelAdmin(account);
         long membersCountOfChannels = newChannelMembersCount;
@@ -110,7 +110,7 @@ public class ChannelService {
             membersCountOfChannels += channel.getMembersCount();
         }
         if(membersCountOfChannels > chosenPlan.getMembers()){
-            throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.FORBIDDEN);
+            throw new RequestException("You have reached the limit of members, upgrade your plan", HttpStatus.UNAUTHORIZED);
         }
         return true;
     }
@@ -148,7 +148,7 @@ public class ChannelService {
         int chosenPlanAttributes = account.getPlan().getCustomColumns();
         int channelAttributesCount = attributeRepository.findAllByChannelChannelId(channelId).size() + 1;
         if(chosenPlanAttributes < channelAttributesCount){
-            throw new RequestException("You have reached the limit of custom columns, upgrade your plan", HttpStatus.FORBIDDEN);
+            throw new RequestException("You have reached the limit of custom columns, upgrade your plan", HttpStatus.UNAUTHORIZED);
         }
         return true;
     }
@@ -157,7 +157,7 @@ public class ChannelService {
     public ChannelResponse updateColumn(Long attributeId, UpdateColumnRequest request) {
         Optional<Attribute> attribute = attributeRepository.findById(attributeId);
         if(attribute.isEmpty()){
-            throw new RequestException("The attribute id provided doesn't exist", HttpStatus.FORBIDDEN);
+            throw new RequestException("The attribute id provided doesn't exist", HttpStatus.UNAUTHORIZED);
         }
         attribute.get().setName(request.attribute().name());
         attribute.get().setValueType(request.attribute().valueType());
@@ -178,7 +178,7 @@ public class ChannelService {
     public ChannelResponse deleteColumn(Long attributeId) {
         Optional<Attribute> attribute = attributeRepository.findById(attributeId);
         if(attribute.isEmpty()){
-            throw new RequestException("The attribute id provided doesn't exist", HttpStatus.FORBIDDEN);
+            throw new RequestException("The attribute id provided doesn't exist", HttpStatus.UNAUTHORIZED);
         }
         List<Value> values = valueRepository.findAllByAttribute(attribute.get());
         for(Value value : values){
