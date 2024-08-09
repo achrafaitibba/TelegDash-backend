@@ -58,7 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             Token token = ITokenRepository.findByToken(jwt).orElseThrow(() -> new RequestException("Token not found", HttpStatus.UNAUTHORIZED));
             if (token.isExpired() || token.isRevoked()) {
-                throw new RequestException("Token is expired or revoked", HttpStatus.FORBIDDEN);
+                throw new RequestException("Session expired", HttpStatus.FORBIDDEN);
             }
 
             /**

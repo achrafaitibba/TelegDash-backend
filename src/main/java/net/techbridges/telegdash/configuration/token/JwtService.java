@@ -1,12 +1,15 @@
 package net.techbridges.telegdash.configuration.token;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import net.techbridges.telegdash.exception.RequestException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -97,14 +100,17 @@ public class JwtService {
     }
 
     public final Claims extractAllClaims(final String token) {
-        return
-                Jwts
-                        .parserBuilder()
-                        .setSigningKey(getSignInKey())
-                        .build()
-                        .parseClaimsJws(token)
-                        .getBody();
-
+        try {
+            return Jwts
+                    .parserBuilder()
+                    .setSigningKey(getSignInKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new RequestException("Session expired", HttpStatus.FORBIDDEN);
+        }
+    }
         /** OR
          Jwts
          .parser()
@@ -112,7 +118,7 @@ public class JwtService {
          .parseClaimsJws(token)
          .getBody();
          */
-    }
+
 
     /**use it to revoke all previous tokens for a new authentication */
     public void revokeAllUserTokens(String userName) {
