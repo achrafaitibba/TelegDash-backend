@@ -1,7 +1,6 @@
 package net.techbridges.telegdash.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
@@ -12,7 +11,6 @@ import net.techbridges.telegdash.dto.request.UpdateColumnRequest;
 import net.techbridges.telegdash.dto.response.ChannelResponse;
 import net.techbridges.telegdash.exception.RequestException;
 import net.techbridges.telegdash.mapper.AttributeMapper;
-import net.techbridges.telegdash.mapper.ValueMapper;
 import net.techbridges.telegdash.model.*;
 import net.techbridges.telegdash.model.enums.GroupType;
 import net.techbridges.telegdash.model.enums.Niche;
@@ -21,6 +19,7 @@ import net.techbridges.telegdash.telegdashTelethonClientGateway.controller.Teleg
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -213,7 +212,8 @@ public class ChannelService {
                 )
         ).toList();
     }
-    
+
+    @Transactional
     public String createSession(String phoneNumber){
         String token = headers.getHeader("Authorization").substring(7);
         Account accountOwner = accountRepository.findByEmail(jwtService.extractUsername(token)).get();
