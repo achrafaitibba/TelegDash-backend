@@ -61,7 +61,6 @@ public class ChannelController {
 
     @GetMapping("/create-session/{phoneNumber}")
     public ResponseEntity<String> createSession(@PathVariable String phoneNumber) {
-        System.out.println("we here hh");
         return ResponseEntity.ok().body(channelService.createSession(phoneNumber));
     }
 

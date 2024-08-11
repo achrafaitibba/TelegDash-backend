@@ -219,7 +219,11 @@ public class ChannelService {
         Account accountOwner = accountRepository.findByEmail(jwtService.extractUsername(token)).get();
         accountOwner.setPhoneNumber(phoneNumber);
         accountRepository.save(accountOwner);
-        return telegDashPyApiController.createSession(phoneNumber);
+        String response = telegDashPyApiController.createSession(phoneNumber);
+        if(response.startsWith("Error")){
+            throw new RequestException(response, HttpStatus.OK);
+        }
+        return response;
     }
 
     public String submitCode(String phoneNumber, String code) {
