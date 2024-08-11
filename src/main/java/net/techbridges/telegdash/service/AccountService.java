@@ -202,7 +202,9 @@ public class AccountService {
         Account account = accountRepository.findByEmail(email).orElseThrow(() -> new RequestException("User not found with email: " + email, HttpStatus.NOT_FOUND));
         account.setPassword(bCryptPasswordEncoder.encode(newPassword));
         accountRepository.save(account);
-        var jwtToken = jwtService.generateToken(new HashMap<>(), account);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("subscriptionId", account.getSubscriptionId());
+        var jwtToken = jwtService.generateToken(claims, account);
         var refreshToken = jwtService.generateRefreshToken(account);
         saveUserToken(Account.builder().email(email).password(account.getPassword()).build(), jwtToken);
         return new AccountAuthResponse(email, jwtToken, refreshToken, account.getPhoneNumber());
