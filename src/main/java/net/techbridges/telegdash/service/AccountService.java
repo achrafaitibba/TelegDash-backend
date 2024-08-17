@@ -58,6 +58,7 @@ public class AccountService {
     private final UserDetailsService userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final FeedbackRepository feedbackRepository;
+    private final HttpServletRequest headers;
     @Value("${app.security.allowed.origin}")
     private String origin;
 
@@ -112,7 +113,7 @@ public class AccountService {
         LocalDate currentDate = LocalDate.now().plusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = currentDate.format(formatter);
-        return paymentController.createSubscription(new CreateSubscriptionRequest(usedPlan.getPaypalPlanId(), formattedDate, "https://app.telegdash.com","https://telegdash.com"));
+        return paymentController.createSubscription(new CreateSubscriptionRequest(usedPlan.getPaypalPlanId(), formattedDate, "https://app.telegdash.com","https://app.telegdash.com"));
 
     }
 
@@ -214,4 +215,19 @@ public class AccountService {
         return feedbackRepository.save(feedback);
     }
 
+
+    public String cancelSubscription(String raison) throws Exception{
+        String response = "";
+        String token = headers.getHeader("Authorization").substring(7);
+        String subscriptionId = jwtService.extractAllClaims(token).get("subscriptionId").toString();
+        if(subscriptionId != null){
+            int cancelReq = paymentController.cancelSubscription(subscriptionId, raison);
+            if(cancelReq == 1){
+                response = "Subscription cancelled";
+            }else {
+                response = "An error occurred, you may need to cancel via your paypal account";
+            }
+        }
+        return response;
+    }
 }

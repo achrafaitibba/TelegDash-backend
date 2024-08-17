@@ -30,17 +30,22 @@ public class PaymentController {
         return subscriptionService.approveSubscription(subscription);
     }
 
-    public Object reviseSubscription(@RequestBody  ReviseSubscriptionRequest request) throws Exception {
+    public Object reviseSubscription(ReviseSubscriptionRequest request) throws Exception {
         return subscriptionService.reviseSubscription(request);
     }
 
     //todo, restrict access
-    public Product createProduct(@RequestBody String productName) throws Exception{
+    public Product createProduct(String productName) throws Exception{
         return subscriptionService.createProduct(productName);
     }
 
     //todo, restrict access
-    public PaypalPlan createPlan(@RequestBody PlanRequest request) throws Exception{
+    public PaypalPlan createPlan( PlanRequest request) throws Exception{
         return subscriptionService.createPlan(request);
     }
+
+    public int cancelSubscription(String subscriptionId, String raison) throws Exception {
+        return subscriptionService.cancelSubscription(subscriptionId, raison);
+    }
+
 }

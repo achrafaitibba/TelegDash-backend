@@ -7,6 +7,7 @@ import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionReq
 import net.techbridges.telegdash.paymentService.paypal.dto.PlanRequest;
 import net.techbridges.telegdash.paymentService.paypal.dto.ReviseSubscriptionRequest;
 import net.techbridges.telegdash.paymentService.paypal.model.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -143,6 +144,24 @@ public class SubscriptionService {
                 PaypalPlan.class
         );
         return response.getBody();
+    }
+
+    public int cancelSubscription(String subscriptionId, String raison) throws Exception {
+        requestHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("raison", raison);
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, httpHeaders);
+        ResponseEntity<Void> response = restTemplate.exchange(
+                baseUrl.getBaseUrl() + "v1/billing/subscriptions/" + subscriptionId + "/cancel",
+                HttpMethod.POST,
+                requestEntity,
+                Void.class);
+        if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 }
