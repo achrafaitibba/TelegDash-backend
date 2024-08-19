@@ -83,7 +83,7 @@ public class PlanService {
                 .builder()
                 .planId(1L)
                 .subscriptionType(SubscriptionType.PAID)
-                .paypalPlanId("P-7YK11192208348409MZ4CSEA")
+                .paypalPlanId("P-8UK96702728776419M3BVORQ")
                 .planName("Paid-Basic-Monthly")
                 .description("Paid-Basic-Monthly")
                 .channels(5)

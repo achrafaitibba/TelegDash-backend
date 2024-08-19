@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import net.techbridges.telegdash.annotation.SubscriptionChecker;
 import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.configuration.token.Token;
 import net.techbridges.telegdash.configuration.token.TokenRepository;
@@ -216,6 +217,7 @@ public class AccountService {
     }
 
 
+    @SubscriptionChecker
     public String cancelSubscription(String raison) throws Exception{
         String response = "";
         String token = headers.getHeader("Authorization").substring(7);
