@@ -222,13 +222,15 @@ public class AccountService {
         String response = "";
         String token = headers.getHeader("Authorization").substring(7);
         String subscriptionId = jwtService.extractAllClaims(token).get("subscriptionId").toString();
-        if(subscriptionId != null){
+        if(!"null".equals(subscriptionId)){
             int cancelReq = paymentController.cancelSubscription(subscriptionId, raison);
             if(cancelReq == 1){
                 response = "Subscription cancelled";
             }else {
                 response = "An error occurred, you may need to cancel via your paypal account";
             }
+        }else{
+            response = "Not subscribed yet";
         }
         return response;
     }
