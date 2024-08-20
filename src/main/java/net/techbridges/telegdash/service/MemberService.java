@@ -93,14 +93,24 @@ public class MemberService {
     }
 
     private void synchronizeDatabase(String channelId) {
-        if(isChannelMembersCreditAvailable(channelId, telegDashPyApiController.getMembersCount(channelId))){
+        int allowedMembersCount = 50_000;
+        int creditAvailability = telegDashPyApiController.getMembersCount(channelId);
+        Optional<Channel> toCheck = channelRepository.findById(channelId);
+        Account account = toCheck.get().getChannelAdmin();
+        Plan chosenPlan = account.getPlan();
+        if(chosenPlan.getPlanName().equals("FREE")){
+            allowedMembersCount = Math.toIntExact(chosenPlan.getMembers());
+            creditAvailability = Math.toIntExact(chosenPlan.getMembers());
+        }
+        System.out.println("Members count allowed: " + allowedMembersCount);
+        if(isChannelMembersCreditAvailable(channelId, creditAvailability)){
             setStatusExpired(channelId);
             List<Member> members = memberRepository.findAllByChannelChannelId(channelId);
             for (Member member : members) {
                 member.setMemberStatus(MemberStatus.KICKED);
                 memberRepository.save(member);
             }
-            List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, 50_000L);
+            List<TelegramMember> telegramMembers = getAllTelegramMembers(channelId, (long) allowedMembersCount);
             Channel channel = channelRepository.findById(channelId).get();
             for (TelegramMember telegramMember : telegramMembers) {
                 Optional<Member> currentMember = memberRepository.findByTelegramMemberTelegramMemberIdAndChannelChannelId(telegramMember.getTelegramMemberId(), channelId);
