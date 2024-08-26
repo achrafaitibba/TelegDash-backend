@@ -82,6 +82,24 @@ public class PlanService {
         planRepository.save(Plan
                 .builder()
                 .planId(1L)
+                .subscriptionType(SubscriptionType.FREE)
+                .paypalPlanId("XXXXXXXXXXXXXXXXXXXXXX")
+                .planName("FREE")
+                .description("FREE")
+                .channels(1)
+                .members(100L)
+                .reminder(false)
+                .reminders(0)
+                .reminderFrequency(ReminderFrequency.MONTH)
+                .customColumns(0)
+                .kickingMember(true)
+                .autoKickingMember(false)
+                .isActive(true)
+                .planLevel(1)
+                .build());
+        planRepository.save(Plan
+                .builder()
+                .planId(2L)
                 .subscriptionType(SubscriptionType.PAID)
                 .paypalPlanId("P-8UK96702728776419M3BVORQ")
                 .planName("Paid-Basic-Monthly")
@@ -95,23 +113,7 @@ public class PlanService {
                 .kickingMember(true)
                 .autoKickingMember(true)
                 .isActive(true)
-                .build());
-        planRepository.save(Plan
-                .builder()
-                .planId(2L)
-                .subscriptionType(SubscriptionType.PAID)
-                .paypalPlanId("P-2D941743PY8788919MZ4CTJY")
-                .planName("Paid-Premium-Monthly")
-                .description("Paid-Premium-Monthly")
-                .channels(1000)
-                .members(50_000L)
-                .reminder(true)
-                .reminders(1)
-                .reminderFrequency(ReminderFrequency.WEEK)
-                .customColumns(5)
-                .kickingMember(true)
-                .autoKickingMember(true)
-                .isActive(true)
+                .planLevel(2)
                 .build());
         planRepository.save(Plan
                 .builder()
@@ -129,10 +131,29 @@ public class PlanService {
                 .kickingMember(true)
                 .autoKickingMember(true)
                 .isActive(true)
+                .planLevel(3)
                 .build());
         planRepository.save(Plan
                 .builder()
                 .planId(4L)
+                .subscriptionType(SubscriptionType.PAID)
+                .paypalPlanId("P-2D941743PY8788919MZ4CTJY")
+                .planName("Paid-Premium-Monthly")
+                .description("Paid-Premium-Monthly")
+                .channels(1000)
+                .members(50_000L)
+                .reminder(true)
+                .reminders(1)
+                .reminderFrequency(ReminderFrequency.WEEK)
+                .customColumns(5)
+                .kickingMember(true)
+                .autoKickingMember(true)
+                .isActive(true)
+                .planLevel(4)
+                .build());
+        planRepository.save(Plan
+                .builder()
+                .planId(5L)
                 .subscriptionType(SubscriptionType.PAID)
                 .paypalPlanId("P-2D473719TF116552EMZ4CU2Y")
                 .planName("Paid-Premium-Yearly")
@@ -146,40 +167,9 @@ public class PlanService {
                 .kickingMember(true)
                 .autoKickingMember(true)
                 .isActive(true)
+                .planLevel(5)
                 .build());
-        planRepository.save(Plan
-                .builder()
-                .planId(5L)
-                .subscriptionType(SubscriptionType.FREE)
-                .paypalPlanId("XXXXXXXXXXXXXXXXXXXXXX")
-                .planName("FREE")
-                .description("FREE")
-                .channels(1)
-                .members(100L)
-                .reminder(false)
-                .reminders(0)
-                .reminderFrequency(ReminderFrequency.MONTH)
-                .customColumns(0)
-                .kickingMember(true)
-                .autoKickingMember(false)
-                .isActive(true)
-                .build());
-        planRepository.save(Plan
-                .builder()
-                .planId(6L)
-                .subscriptionType(SubscriptionType.PAID)
-                .paypalPlanId("P-6WS33287U8120924FMYWCGJI")
-                .planName("sandbox")
-                .description("sandbox")
-                .channels(1)
-                .members(100L)
-                .reminder(false)
-                .reminders(0)
-                .reminderFrequency(ReminderFrequency.MONTH)
-                .customColumns(0)
-                .kickingMember(true)
-                .autoKickingMember(false)
-                .isActive(true)
-                .build());
+
+
     }
 }

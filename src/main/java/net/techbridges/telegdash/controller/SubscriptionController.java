@@ -2,7 +2,10 @@ package net.techbridges.telegdash.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.service.AccountService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1.0/subscriptions")
@@ -13,5 +16,10 @@ public class SubscriptionController {
     @PostMapping("/cancel")
     public String cancelSubscription(@RequestBody String raison) throws Exception {
         return accountService.cancelSubscription(raison);
+    }
+
+    @GetMapping("/upgradeStatus")
+    public ResponseEntity<List<Integer>> upgradeStatus() {
+        return ResponseEntity.ok().body(accountService.upgradeStatus());
     }
 }

@@ -30,6 +30,7 @@ import net.techbridges.telegdash.repository.PlanRepository;
 import net.techbridges.telegdash.utils.InputChecker;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,9 +41,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -233,5 +232,17 @@ public class AccountService {
             response = "Not subscribed yet";
         }
         return response;
+    }
+    public List<Integer> upgradeStatus() {
+        List<Integer> plans = new ArrayList<>();
+        String token = headers.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(token);
+        Optional<Account> account = accountRepository.findByEmail(email);
+        Optional<Plan> plan = planRepository.findById(account.get().getPlan().getPlanId());
+        Integer planLevel = plan.get().getPlanLevel();
+        for(int i = planLevel + 1; i <= 5; i++){
+            plans.add(i);
+        }
+        return plans;
     }
 }

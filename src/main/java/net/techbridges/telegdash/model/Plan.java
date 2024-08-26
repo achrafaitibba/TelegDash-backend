@@ -32,4 +32,5 @@ public class Plan {
     private Boolean kickingMember;
     private Boolean autoKickingMember;
     private Boolean isActive = true;
+    private Integer planLevel;
 }
