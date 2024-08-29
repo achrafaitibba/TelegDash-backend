@@ -216,7 +216,6 @@ public class AccountService {
     }
 
 
-    @SubscriptionChecker
     public String cancelSubscription(String raison) throws Exception{
         String response = "";
         String token = headers.getHeader("Authorization").substring(7);
