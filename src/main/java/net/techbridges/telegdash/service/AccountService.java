@@ -239,7 +239,7 @@ public class AccountService {
         Optional<Account> account = accountRepository.findByEmail(email);
         Optional<Plan> plan = planRepository.findById(account.get().getPlan().getPlanId());
         Integer planLevel = plan.get().getPlanLevel();
-        for(int i = planLevel + 1; i <= 5; i++){
+        for(int i = planLevel + 1; i <= 4; i++){
             plans.add(i);
         }
         return plans;

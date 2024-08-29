@@ -119,24 +119,6 @@ public class PlanService {
                 .builder()
                 .planId(3L)
                 .subscriptionType(SubscriptionType.PAID)
-                .paypalPlanId("P-5XX02396AK7680000MZ4CUDQ")
-                .planName("Paid-Basic-Yearly")
-                .description("Paid-Basic-Yearly")
-                .channels(5)
-                .members(2500L)
-                .reminder(true)
-                .reminders(1)
-                .reminderFrequency(ReminderFrequency.MONTH)
-                .customColumns(1)
-                .kickingMember(true)
-                .autoKickingMember(true)
-                .isActive(true)
-                .planLevel(3)
-                .build());
-        planRepository.save(Plan
-                .builder()
-                .planId(4L)
-                .subscriptionType(SubscriptionType.PAID)
                 .paypalPlanId("P-2D941743PY8788919MZ4CTJY")
                 .planName("Paid-Premium-Monthly")
                 .description("Paid-Premium-Monthly")
@@ -149,11 +131,11 @@ public class PlanService {
                 .kickingMember(true)
                 .autoKickingMember(true)
                 .isActive(true)
-                .planLevel(4)
+                .planLevel(3)
                 .build());
         planRepository.save(Plan
                 .builder()
-                .planId(5L)
+                .planId(4L)
                 .subscriptionType(SubscriptionType.PAID)
                 .paypalPlanId("P-2D473719TF116552EMZ4CU2Y")
                 .planName("Paid-Premium-Yearly")
@@ -167,7 +149,7 @@ public class PlanService {
                 .kickingMember(true)
                 .autoKickingMember(true)
                 .isActive(true)
-                .planLevel(5)
+                .planLevel(4)
                 .build());
 
 
