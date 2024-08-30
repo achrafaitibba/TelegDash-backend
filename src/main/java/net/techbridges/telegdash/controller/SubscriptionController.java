@@ -22,4 +22,9 @@ public class SubscriptionController {
     public ResponseEntity<List<Integer>> upgradeStatus() {
         return ResponseEntity.ok().body(accountService.upgradeStatus());
     }
+
+    @GetMapping("/upgrade/{planId}")
+    public ResponseEntity<Object> upgrade(@PathVariable Long planId) throws Exception{
+        return ResponseEntity.ok().body(accountService.upgrade(planId));
+    }
 }

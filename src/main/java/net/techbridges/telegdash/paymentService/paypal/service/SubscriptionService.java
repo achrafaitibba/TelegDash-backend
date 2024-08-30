@@ -88,6 +88,10 @@ public class SubscriptionService {
     public Object reviseSubscription(ReviseSubscriptionRequest request) throws Exception {
         return isSubscriptionActive(request.subscriptionId()) ? updateSubscription(request) : new RequestException("The subscription is not ACTIVE yet", HttpStatus.CONFLICT).getMessage();
     }
+
+    public Object upgradeSubscription(ReviseSubscriptionRequest request) throws Exception{
+        return updateSubscription(request);
+    }
     private Boolean isSubscriptionActive(String subscriptionId) throws Exception {
         return getSubscription(subscriptionId).getStatus().toString().equals("ACTIVE");
     }

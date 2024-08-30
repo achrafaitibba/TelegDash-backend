@@ -22,6 +22,7 @@ import net.techbridges.telegdash.model.enums.Role;
 import net.techbridges.telegdash.model.enums.SubscriptionType;
 import net.techbridges.telegdash.paymentService.paypal.controller.PaymentController;
 import net.techbridges.telegdash.paymentService.paypal.dto.CreateSubscriptionRequest;
+import net.techbridges.telegdash.paymentService.paypal.dto.ReviseSubscriptionRequest;
 import net.techbridges.telegdash.paymentService.paypal.model.Link;
 import net.techbridges.telegdash.paymentService.paypal.model.Subscription;
 import net.techbridges.telegdash.repository.AccountRepository;
@@ -243,5 +244,23 @@ public class AccountService {
             plans.add(i);
         }
         return plans;
+    }
+
+    //todo, make sure plan is upgrade not downgrade
+    public Object upgrade(Long planId) throws Exception {
+        String token = headers.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(token);
+        Optional<Account> account = accountRepository.findByEmail(email);
+        Plan plan = planRepository.findById(planId).get();
+        if("null".equals(account.get().getSubscriptionId())){
+            account.get().setPlan(plan);
+            accountRepository.save(account.get());
+            Subscription newSub = createSubscription(email);
+            account.get().setSubscriptionId(newSub.getId());
+            accountRepository.save(account.get());
+            return extractSubscriptionUrl(newSub);
+        }else{
+            return paymentController.reviseSubscription(new ReviseSubscriptionRequest(account.get().getSubscriptionId(), plan.getPaypalPlanId()));
+        }
     }
 }

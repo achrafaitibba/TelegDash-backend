@@ -26,12 +26,17 @@ public class PaymentController {
         return subscriptionService.getSubscription(subscriptionId);
     }
 
+    //todo, test this endpoint !!
     public String approveSubscription(Subscription subscription) throws Exception {
         return subscriptionService.approveSubscription(subscription);
     }
 
     public Object reviseSubscription(ReviseSubscriptionRequest request) throws Exception {
         return subscriptionService.reviseSubscription(request);
+    }
+
+    public Object upgradeSubscription(ReviseSubscriptionRequest request) throws Exception {
+        return subscriptionService.upgradeSubscription(request);
     }
 
     //todo, restrict access
