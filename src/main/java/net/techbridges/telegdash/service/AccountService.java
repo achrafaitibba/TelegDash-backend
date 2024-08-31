@@ -246,12 +246,14 @@ public class AccountService {
         return plans;
     }
 
-    //todo, make sure plan is upgrade not downgrade
     public Object upgrade(Long planId) throws Exception {
         String token = headers.getHeader("Authorization").substring(7);
         String email = jwtService.extractUsername(token);
         Optional<Account> account = accountRepository.findByEmail(email);
         Plan plan = planRepository.findById(planId).get();
+        if(plan.getPlanLevel() < planRepository.findById(account.get().getPlan().getPlanId()).get().getPlanLevel()){
+            throw new RequestException("We don't support downgrading plans for now", HttpStatus.BAD_REQUEST);
+        }
         if("null".equals(account.get().getSubscriptionId())){
             account.get().setPlan(plan);
             accountRepository.save(account.get());
