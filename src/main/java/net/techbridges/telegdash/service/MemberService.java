@@ -282,8 +282,6 @@ public class MemberService {
         }
     }
 
-    //todo, test subscription not paid yet
-    @SubscriptionChecker
     private boolean isAutoKickAuthorized(Channel channel) {
         String accountOwner = channel.getChannelAdmin().getUsername();
         Plan plan = planRepository.findById(accountRepository.findByEmail(accountOwner).get().getPlan().getPlanId()).get();
