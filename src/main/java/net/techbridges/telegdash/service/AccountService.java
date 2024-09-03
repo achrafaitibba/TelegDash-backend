@@ -275,4 +275,9 @@ public class AccountService {
             }
         }
     }
+
+    @SubscriptionChecker
+    public Integer subscriptionStatus() {
+        return 1;
+    }
 }
