@@ -280,4 +280,12 @@ public class AccountService {
     public Integer subscriptionStatus() {
         return 1;
     }
+
+    public String paymentStatus() throws Exception {
+        String token = headers.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(token);
+        Optional<Account> account = accountRepository.findByEmail(email);
+        String subsId = account.get().getSubscriptionId();
+        return paymentController.getSubscriptionDetails(subsId).getStatus().toString();
+    }
 }

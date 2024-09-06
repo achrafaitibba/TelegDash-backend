@@ -32,4 +32,9 @@ public class SubscriptionController {
     public ResponseEntity<Integer> status() {
         return ResponseEntity.ok().body(accountService.subscriptionStatus());
     }
+
+    @GetMapping("/paymentStatus")
+    public ResponseEntity<String> paymentStatus() throws Exception{
+        return ResponseEntity.ok().body(accountService.paymentStatus());
+    }
 }
