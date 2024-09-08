@@ -140,7 +140,7 @@ public class AccountService {
         /** revoking previous tokens in case user is connected in another device*/
         //revokeAllUserTokens(user);
         saveUserToken(Account.builder().email(email).password(account.password()).build(), jwtToken);
-        return new AccountAuthResponse(email, jwtToken, refreshToken);
+        return new AccountAuthResponse(email, jwtToken, refreshToken, toAuthenticate.get().getPhoneNumber());
     }
 
 
@@ -177,7 +177,7 @@ public class AccountService {
                 var newToken = jwtService.generateToken(new HashMap<>(), user);
                 jwtService.revokeAllUserTokens(user.getUsername());
                 saveUserToken(user, newToken);
-                var _response = new AccountAuthResponse(username, newToken, refreshToken);
+                var _response = new AccountAuthResponse(username, newToken, refreshToken, user.getPhoneNumber());
                 new ObjectMapper()
                         .writeValue(
                                 response.getOutputStream(),
@@ -205,7 +205,7 @@ public class AccountService {
         var jwtToken = jwtService.generateToken(new HashMap<>(), account);
         var refreshToken = jwtService.generateRefreshToken(account);
         saveUserToken(Account.builder().email(email).password(account.getPassword()).build(), jwtToken);
-        return new AccountAuthResponse(email, jwtToken, refreshToken);
+        return new AccountAuthResponse(email, jwtToken, refreshToken, account.getPhoneNumber());
     }
 
     public Feedback saveFeedback(Feedback feedback) {

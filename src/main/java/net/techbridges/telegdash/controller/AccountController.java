@@ -66,4 +66,7 @@ public class AccountController {
     public String test(){
         return "You good hh";
     }
+    @GetMapping("/logged")
+    public void logged(){
+    }
 }
