@@ -286,6 +286,10 @@ public class AccountService {
         String email = jwtService.extractUsername(token);
         Optional<Account> account = accountRepository.findByEmail(email);
         String subsId = account.get().getSubscriptionId();
+        if(subsId.equals("null")){
+            return "Not Subscribed yet";
+        }
+        System.out.println("Subs: " + subsId);
         return paymentController.getSubscriptionDetails(subsId).getStatus().toString();
     }
 }
