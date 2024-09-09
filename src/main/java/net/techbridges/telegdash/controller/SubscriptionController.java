@@ -37,4 +37,9 @@ public class SubscriptionController {
     public ResponseEntity<String> paymentStatus() throws Exception{
         return ResponseEntity.ok().body(accountService.paymentStatus());
     }
+
+    @GetMapping("/approve")
+    public ResponseEntity<String> approve() throws Exception{
+        return ResponseEntity.ok().body(accountService.approveSubscription());
+    }
 }

@@ -63,7 +63,8 @@ public class SubscriptionService {
         return response.getBody();
     }
 
-    public String approveSubscription(Subscription subscription) throws Exception {
+    public String approveSubscription(String subsId) throws Exception {
+        Subscription subscription = getSubscription(subsId);
         return subscription.getLinks().stream()
                 .filter(link -> link.getRel().equals("approve"))
                 .findFirst()

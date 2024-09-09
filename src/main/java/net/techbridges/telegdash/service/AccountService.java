@@ -292,4 +292,13 @@ public class AccountService {
         System.out.println("Subs: " + subsId);
         return paymentController.getSubscriptionDetails(subsId).getStatus().toString();
     }
+
+    public String approveSubscription() throws Exception{
+        String token = headers.getHeader("Authorization").substring(7);
+        String email = jwtService.extractUsername(token);
+        Optional<Account> account = accountRepository.findByEmail(email);
+        String subsId = account.get().getSubscriptionId();
+        return paymentController.approveSubscriptionUrl(subsId);
+    }
+
 }

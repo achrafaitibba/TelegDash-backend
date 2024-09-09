@@ -26,9 +26,8 @@ public class PaymentController {
         return subscriptionService.getSubscription(subscriptionId);
     }
 
-    //todo, test this endpoint !!
-    public String approveSubscription(Subscription subscription) throws Exception {
-        return subscriptionService.approveSubscription(subscription);
+    public String approveSubscriptionUrl(String subsId) throws Exception {
+        return subscriptionService.approveSubscription(subsId);
     }
 
     public Object reviseSubscription(ReviseSubscriptionRequest request) throws Exception {
