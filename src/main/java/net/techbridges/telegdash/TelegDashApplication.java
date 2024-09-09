@@ -17,14 +17,14 @@ public class TelegDashApplication{
     //todo, check value type by attribute valueType before update/create value, get valueType by attributeId, check it on frontend
     //todo, scheduled admin reminder : sendMessageToAdmin
     //todo, inform admin that reminders has been sent to expired members
+    //todo, automate the payments via patreon
 
 
-    //todo, JWT expired response
+    //todo, upgrade to premium/annually after checking current plan, also make price lower 'upgrade to premium with $100..'
+    //todo, handle error of external apis by checking their status and returning their error message "400 Bad Request: "{"error":"The provided phone number is invalid."}"] with root cause..."
     //todo, hide plan/mailing controller endpoints
-    //todo, upgrade plan, use revise subscription method
     //todo, check token owner 'extract them' before updating password
     //todo, cors origin for python api
-    //todo, get subscription url if user ignores paying at register phase
     //todo, add lifetime subscription type for members
     //todo, save emails from subscription details after being subscribed
     //todo, refresh token mechanism
