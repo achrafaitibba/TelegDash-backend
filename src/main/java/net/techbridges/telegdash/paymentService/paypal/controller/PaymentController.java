@@ -38,12 +38,10 @@ public class PaymentController {
         return subscriptionService.upgradeSubscription(request);
     }
 
-    //todo, restrict access
     public Product createProduct(String productName) throws Exception{
         return subscriptionService.createProduct(productName);
     }
 
-    //todo, restrict access
     public PaypalPlan createPlan( PlanRequest request) throws Exception{
         return subscriptionService.createPlan(request);
     }

@@ -136,7 +136,7 @@ public class SubscriptionService {
         frequency.setIntervalUnit(request.intervalUnit());
         billingCycle.setFrequency(frequency);
         billingCycle.setTenureType(request.planType());
-        billingCycle.setSequence(request.sequence());
+        billingCycle.setSequence(1);
         billingCycle.setPricingScheme(pricingScheme);
         billingCycles.add(billingCycle);
         requestBody.put("billing_cycles", billingCycles);

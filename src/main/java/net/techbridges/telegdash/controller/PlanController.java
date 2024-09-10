@@ -3,6 +3,7 @@ package net.techbridges.telegdash.controller;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.dto.response.PlanResponse;
 import net.techbridges.telegdash.model.Plan;
+import net.techbridges.telegdash.paymentService.paypal.dto.PlanRequest;
 import net.techbridges.telegdash.service.PlanService;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,5 +40,9 @@ public class PlanController {
         return planService.getPlan(id);
     }
 
+    @PostMapping("/paypal")
+    public Object createPlan(@RequestBody PlanRequest plan) throws Exception{
+        return planService.createPaypalPlan(plan);
+    }
 
 }

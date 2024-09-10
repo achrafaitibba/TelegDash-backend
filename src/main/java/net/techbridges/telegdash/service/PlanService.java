@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import net.techbridges.telegdash.dto.response.PlanResponse;
 import net.techbridges.telegdash.exception.RequestException;
+import net.techbridges.telegdash.paymentService.paypal.controller.PaymentController;
+import net.techbridges.telegdash.paymentService.paypal.dto.PlanRequest;
 import org.springframework.beans.factory.annotation.Value;
 import net.techbridges.telegdash.configuration.token.JwtService;
 import net.techbridges.telegdash.model.Plan;
@@ -24,6 +26,7 @@ public class PlanService {
     @Lazy
     private final HttpServletRequest headers;
     private final JwtService jwtService;
+    private final PaymentController paymentController;
     @Value("${app.sudo}")
     private String sudoEmail;
 
@@ -62,7 +65,7 @@ public class PlanService {
 
     public Plan getPlan(Long id) {
         if(!isSudo()){
-            throw new RequestException("You are not allowed to get all plans", HttpStatus.UNAUTHORIZED);
+            throw new RequestException("You are not allowed to get plans", HttpStatus.UNAUTHORIZED);
         }
         return planRepository.findById(id).orElse(null);
     }
@@ -75,7 +78,12 @@ public class PlanService {
         return sudoEmail.equals(username);
     }
 
-
+    public Object createPaypalPlan(PlanRequest plan) throws Exception {
+        if(!isSudo()){
+            throw new RequestException("You are not allowed to use this feature, only for app creator", HttpStatus.UNAUTHORIZED);
+        }
+        return paymentController.createPlan(plan);
+    }
 
     @PostConstruct
     void initPlans(){
