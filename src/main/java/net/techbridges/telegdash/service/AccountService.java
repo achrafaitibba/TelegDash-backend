@@ -248,6 +248,7 @@ public class AccountService {
         return plans;
     }
 
+    @Transactional
     public String upgrade(Long planId) throws Exception {
         String token = headers.getHeader("Authorization").substring(7);
         String email = jwtService.extractUsername(token);
