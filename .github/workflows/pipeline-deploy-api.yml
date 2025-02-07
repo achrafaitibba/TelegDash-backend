@@ -1,0 +1,107 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/*.yml'
+      - 'docker-compose.*.yml'
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  APP_NAME: telegdash
+  REGISTRY: ghcr.io
+  IMAGE_NAME: telegdash
+  COMPOSE_FILE_API: docker-compose.api.yml
+  COMPOSE_FILE_DB: docker-compose.db.yml
+  APP_DIR: /home/apps/telegdash
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ensure directory exists on VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: mkdir -p ${{ env.APP_DIR }}
+
+      - name: Copy compose files to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: docker-compose.*.yml
+          target: ${{ env.APP_DIR }}/
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ${{ env.REGISTRY }} \
+              -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+            cd ${{ env.APP_DIR }}
+            
+            # Create external networks if they don't exist
+            docker network create nginx-proxy-network || true
+            docker network create ${{env.APP_NAME}}-network || true
+            
+            # Start MySQL with project name
+            if [ -z "$(docker ps -q -f name=${{env.APP_NAME}}-mysql)" ]; then
+              docker compose -p ${{env.APP_NAME}} -f ${{ env.COMPOSE_FILE_DB }} up -d
+            fi
+            
+            # Wait for MySQL to be healthy
+            MYSQL_CONTAINER=$(docker compose -p ${{env.APP_NAME}} -f ${{ env.COMPOSE_FILE_DB }} ps -q mysql)
+            while [ "$(docker inspect -f '{{.State.Health.Status}}' $MYSQL_CONTAINER)" != "healthy" ]; do
+              sleep 5
+              echo "Waiting for MySQL to become healthy..."
+            done
+            
+            # Determine current color
+            CURRENT_COLOR_FILE="${{ env.APP_DIR }}/current_color"
+            if [ -f "$CURRENT_COLOR_FILE" ]; then
+              CURRENT_COLOR=$(cat $CURRENT_COLOR_FILE)
+              NEW_COLOR="green"
+              if [ "$CURRENT_COLOR" == "green" ]; then
+                NEW_COLOR="blue"
+              fi
+            else
+              NEW_COLOR="blue"
+            fi 
+            
+            # Pull latest image
+            docker compose -p ${{env.APP_NAME}}-${NEW_COLOR} -f ${{ env.COMPOSE_FILE_API }} pull
+            
+            # Start new containers with project name including color
+            docker compose -p ${{env.APP_NAME}}-${NEW_COLOR} -f ${{ env.COMPOSE_FILE_API }} up -d
+            
+            # Wait for new API container to be healthy
+            NEW_API_CONTAINER=$(docker compose -p ${{env.APP_NAME}}-${NEW_COLOR} -f ${{ env.COMPOSE_FILE_API }} ps -q api)
+            if [ -n "$NEW_API_CONTAINER" ]; then
+              while [ "$(docker inspect -f '{{.State.Health.Status}}' $NEW_API_CONTAINER)" != "healthy" ]; do
+                sleep 5
+                echo "Waiting for new API container to become healthy..."
+              done
+            else
+              echo "Error: New API container not found!"
+              exit 1
+            fi
+            
+            # Stop old containers
+            if [ -n "$CURRENT_COLOR" ]; then
+              docker compose -p ${{env.APP_NAME}}-${CURRENT_COLOR} -f ${{ env.COMPOSE_FILE_API }} down
+             fi
+            
+            # Update current color
+            echo $NEW_COLOR > $CURRENT_COLOR_FILE

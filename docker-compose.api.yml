@@ -1,0 +1,40 @@
+services:
+  api:
+    image: ghcr.io/${GITHUB_USERNAME}/${API_IMAGE_NAME}:latest
+    restart: always
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_EMAIL: ${EMAIL}
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DB_CONTAINER_NAME}:3306/${DB_NAME}?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_ROOT_PASSWORD}
+      spring.mail.custom-name: ${spring.mail.custom-name}
+      spring.mail.host: ${spring.mail.host}
+      spring.mail.password: ${spring.mail.password}
+      spring.mail.port: 465
+      spring.mail.username: ${spring.mail.username}
+      api.auth.password: ${api.auth.password}
+      api.auth.username: ${api.auth.username}
+      api.telegdash: ${api.telegdash}
+      app.security.allowed.origin: ${app.security.allowed.origin}
+      app.sudo: ${app.sudo}
+      payment.paypal.api.base-url: ${payment.paypal.api.base-url}
+      payment.paypal.api.live-base-url: ${payment.paypal.api.live-base-url}
+      payment.paypal.client-id: ${payment.paypal.client-id}
+      payment.paypal.secret: ${payment.paypal.secret}
+    networks:
+      - app-network
+      - nginx-proxy-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+
+networks:
+  nginx-proxy-network:
+    external: true
+  app-network:
+    name: ${APP_NAME}-network
+    external: true
