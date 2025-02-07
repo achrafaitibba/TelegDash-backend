@@ -13,7 +13,7 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: telegdash
   DOCKERFILE: Dockerfile
-  JAR_FILE_NAME: TelegDash
+  JAR_FILE_NAME: telegdash
 
 jobs:
   build-and-push:
