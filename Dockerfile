@@ -3,7 +3,7 @@ FROM maven:3.8.7-openjdk-18 AS maven-builder
 WORKDIR /opt/app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+RUN ./mvnw dependency:go-offline #solve this later (learn about mvn and wmvn)
 COPY ./src ./src
 RUN ./mvnw clean install -DskipTests
 
